@@ -87,6 +87,18 @@
   .card{background:#fff; border:1px solid var(--line-dark); display:flex; flex-direction:column;}
   .card-art{aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; background:#f2efe9;}
   .card-art img{width:100%; height:100%; object-fit:cover; display:block;}
+  .product-image{transition:transform .3s ease, opacity .2s ease;}
+  .product-details{position:absolute; inset:0; display:none; flex-direction:column; justify-content:center; gap:14px; padding:28px 20px 20px; background:var(--ink); color:var(--bone);}
+  .card-art.show-details .product-image{display:none;}
+  .card-art.show-details .product-details{display:flex;}
+  .details-label{font-size:0.66rem; color:var(--orange); font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
+  .details-row{display:flex; flex-direction:column; gap:7px;}
+  .details-values{font-size:0.86rem; font-weight:600; line-height:1.35;}
+  .color-list{display:flex; flex-wrap:wrap; gap:7px;}
+  .color-chip{display:inline-flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--bone-dim);}
+  .color-swatch{width:13px; height:13px; border:1px solid rgba(237,232,221,0.55); border-radius:50%;}
+  .details-toggle{position:absolute; top:10px; right:10px; z-index:3; border:1px solid var(--ink); background:var(--bone); color:var(--ink); padding:5px 8px; font-size:0.68rem; font-weight:700; text-decoration:none;}
+  .details-toggle:hover{background:var(--orange);}
   .tag-corner{position:absolute; top:10px; left:10px; font-size:0.66rem; font-weight:700; letter-spacing:0.04em; padding:3px 7px; background:var(--ink); color:var(--bone); z-index:2;}
   .rating{position:absolute; right:10px; bottom:10px; display:flex; gap:2px; padding:5px 6px; background:rgba(21,22,27,0.88); z-index:2;}
   .rating button{border:none; background:none; color:rgba(237,232,221,0.45); padding:0 2px; font-size:0.78rem; line-height:1;}
@@ -169,7 +181,6 @@
 
   .card{transition:transform .25s ease, box-shadow .25s ease;}
   .card:hover{transform:translateY(-6px); box-shadow:0 16px 26px rgba(21,22,27,0.14);}
-  .card-art img{transition:transform .3s ease;}
   .card:hover .card-art img{transform:scale(1.08) rotate(-3deg);}
 
   .pill, .add-btn, .btn-primary, .checkout-btn, .cart-btn, .foot-form button{transition:transform .15s ease, background-color .15s ease, color .15s ease;}
@@ -184,14 +195,74 @@
   .drawer-item{animation:item-in .3s ease;}
   @keyframes item-in{ from{opacity:0; transform:translateX(10px);} to{opacity:1; transform:translateX(0);} }
 
+  /* DROP POLISH */
+  ::selection{background:var(--orange); color:var(--ink);}
+  :focus-visible{outline:3px solid var(--orange); outline-offset:3px;}
+  .announcement{background:var(--ink); color:var(--bone); text-align:center; padding:8px 16px; font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;}
+  .nav{backdrop-filter:blur(14px); background:rgba(237,232,221,.92);}
+  .logo{display:flex; align-items:center; gap:3px;}
+  .logo-mark{width:28px; height:28px; object-fit:contain; margin-right:5px;}
+  .hero{min-height:620px; display:flex; align-items:center; padding:76px 0 60px; background:radial-gradient(circle at 78% 36%, rgba(255,90,31,.22), transparent 24%), var(--ink);}
+  .hero-inner{display:grid; grid-template-columns:1fr .72fr; gap:40px; align-items:center; text-align:left;}
+  .hero-copy{position:relative; z-index:2;}
+  .hero-mark{width:min(100%,330px); max-height:330px; object-fit:contain; margin:0 auto; filter:drop-shadow(18px 24px 0 rgba(255,90,31,.9)); transform:rotate(5deg); animation:mark-in .9s ease both;}
+  @keyframes mark-in{from{opacity:0; transform:translate(20px,18px) rotate(10deg) scale(.92)}to{opacity:1; transform:translate(0,0) rotate(5deg) scale(1)}}
+  .hero-actions{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .hero-link{color:var(--bone); font-size:.88rem; font-weight:700; text-decoration:none; border-bottom:1px solid var(--orange); padding-bottom:4px;}
+  .hero-meta{display:flex; gap:24px; flex-wrap:wrap; margin-top:42px; padding-top:18px; border-top:1px solid var(--line);}
+  .hero-stat strong{display:block; color:var(--orange); font-family:'Archivo Black'; font-size:1.15rem;}
+  .hero-stat span{display:block; color:var(--bone-dim); font-size:.7rem; margin-top:3px; text-transform:uppercase; letter-spacing:.06em;}
+  .shop{padding-top:78px;}
+  .shop-kicker{color:var(--orange); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; margin:0 0 8px;}
+  .catalog-tools{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:24px;}
+  .search-box{display:flex; align-items:center; gap:10px; min-width:min(100%,320px); border-bottom:1px solid var(--ink); padding:8px 0;}
+  .search-box i{color:var(--orange);}
+  .search-box input{width:100%; border:0; outline:0; background:transparent; font:inherit; font-size:.9rem;}
+  .sort-select{border:1px solid var(--ink); background:transparent; color:var(--ink); padding:9px 12px; font:inherit; font-size:.82rem; font-weight:600;}
+  .sort-control{display:flex;align-items:center;gap:10px;color:var(--steel);font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;}
+  .sort-select{appearance:none;min-width:184px;padding:11px 38px 11px 13px;border:1px solid var(--ink);border-radius:0;background:var(--bone) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23FF5A1F' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 13px center;color:var(--ink);cursor:pointer;}
+  .sort-select:hover,.sort-select:focus{background-color:var(--ink);border-color:var(--ink);color:var(--bone);}
+  .result-count{color:var(--steel); font-size:.78rem; font-weight:600;}
+  .card{overflow:hidden; position:relative;}
+  .card-art{background:#e6e0d4;}
+  .card-badge{position:absolute; right:10px; top:10px; z-index:2; background:var(--orange); color:var(--ink); padding:4px 7px; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;}
+  .card-name{line-height:1.2; min-height:2.4em;}
+  .add-btn{display:inline-flex; align-items:center; gap:7px;}
+  .empty-state{grid-column:1/-1; padding:72px 20px; border:1px dashed rgba(21,22,27,.35); text-align:center;}
+  .empty-state h3{font-size:1.35rem; margin-bottom:8px;}
+  .empty-state p{margin:0; color:var(--steel);}
+  .trust-strip{display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line-dark); border-bottom:1px solid var(--line-dark);}
+  .trust-item{padding:22px 18px; text-align:center; border-right:1px solid var(--line-dark);}
+  .trust-item:last-child{border-right:0;}
+  .trust-item i{color:var(--orange); margin-bottom:8px;}
+  .trust-item strong{display:block; font-size:.86rem;}
+  .trust-item span{display:block; color:var(--steel); font-size:.74rem; margin-top:4px;}
+  @media(max-width:760px){
+    .announcement{font-size:.62rem; padding:7px 10px;}
+    .hero{min-height:0; padding:54px 0 42px;}
+    .hero-inner{grid-template-columns:1fr; text-align:center; gap:28px;}
+    .hero-copy{order:2;}
+    .hero-visual{order:1;}
+    .hero-mark{width:220px; height:220px;}
+    .hero-actions,.hero-meta{justify-content:center;}
+    .hero p.sub{margin:24px auto 28px;}
+    .catalog-tools{align-items:stretch;}
+    .search-box{min-width:100%;}
+    .sort-select{width:100%;}
+    .trust-strip{grid-template-columns:1fr;}
+    .trust-item{border-right:0; border-bottom:1px solid var(--line-dark);}
+    .trust-item:last-child{border-bottom:0;}
+  }
+
 </style>
 </head>
 <body>
+<div class="announcement">Free shipping over ₦150,000 · Drop 004 is live</div>
 
 <nav class="nav">
   
   <div class="wrap nav-inner">
-    <a href="index_2.html" class="logo">SILVA<span>·</span>DRIP</a>
+    <a href="index_2.html" class="logo"><img class="logo-mark" src="silva logo.png" alt="">SILVA<span>·</span>DRIP</a>
     <div class="nav-right">
       <ul class="nav-links">
         <li><a href="index_2.html" class="active" aria-current="page"><i class="fa-solid fa-shop" aria-hidden="true"></i>Shop</a></li>
@@ -213,20 +284,16 @@
 
 <section class="hero">
   <div class="wrap hero-inner">
-      <img src="silva logo.png" alt="" style="width: 130px; height: 150px; margin: 0 auto 2px;">
-    <div class="hero-tag">Drop 004 — limited run</div>
-    <div class="drip-wrap">
-      <h1>Silva<br>Drip</h1>
-      <svg class="drip-svg" viewBox="0 0 600 70" preserveAspectRatio="none">
-        <path d="M20,0 L20,26 Q20,42 32,42 Q44,42 44,26 L44,0 Z" fill="#FF5A1F"/>
-        <path d="M120,0 L120,14 Q120,20 128,20 Q136,20 136,14 L136,0 Z" fill="#FF5A1F"/>
-        <path d="M260,0 L260,38 Q260,58 274,58 Q288,58 288,38 L288,0 Z" fill="#FF5A1F"/>
-        <path d="M380,0 L380,10 Q380,15 386,15 Q392,15 392,10 L392,0 Z" fill="#FF5A1F"/>
-        <path d="M470,0 L470,30 Q470,46 482,46 Q494,46 494,30 L494,0 Z" fill="#FF5A1F"/>
-      </svg>
+    <div class="hero-copy">
+      <div class="hero-tag">Drop 004 — limited run</div>
+      <div class="drip-wrap">
+        <h1>Silva<br>Drip</h1>
+      </div>
+      <p class="sub">Streetwear built off concrete and static. Small runs, heavy fabric, no restocks. Once it's gone, it's gone.</p>
+      <div class="hero-actions"><a href="#shop"><button class="btn-primary">Shop the drop <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></a><a class="hero-link" href="about_1.html">Read the story</a></div>
+      <div class="hero-meta"><div class="hero-stat"><strong>004</strong><span>Current drop</span></div><div class="hero-stat"><strong>24h</strong><span>Dispatch window</span></div><div class="hero-stat"><strong>01/01</strong><span>Limited runs</span></div></div>
     </div>
-    <p class="sub">Streetwear built off concrete and static. Small runs, heavy fabric, no restocks. Once it's gone, it's gone.</p>
-    <a href="#shop"><button class="btn-primary">Shop the drop</button></a>
+    <div class="hero-visual"><img class="hero-mark" src="silva logo.png" alt="Silva Drip logo"></div>
   </div>
 </section>
 
@@ -240,12 +307,15 @@
 <section class="shop" id="shop">
   <div class="wrap">
     <div class="shop-head reveal">
-      <h2>The store</h2>
+      <div><p class="shop-kicker">Curated for the concrete</p><h2>The store</h2></div>
       <div class="filters" id="filters"></div>
     </div>
+    <div class="catalog-tools reveal"><label class="search-box"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="productSearch" type="search" placeholder="Search the drop" aria-label="Search products"></label><label class="sort-control" for="productSort"><span>Arrange</span><select class="sort-select" id="productSort" aria-label="Arrange products"><option value="featured">Featured drop</option><option value="newest">Newest first</option><option value="low">Lowest price</option><option value="high">Highest price</option><option value="name">Name: A to Z</option></select></label><span class="result-count" id="resultCount"></span></div>
     <div class="grid reveal-stagger" id="productGrid"></div>
   </div>
 </section>
+
+<section class="trust-strip" aria-label="Shopping benefits"><div class="trust-item"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><strong>Fast dispatch</strong><span>Orders leave within 24 hours</span></div><div class="trust-item"><i class="fa-solid fa-box-open" aria-hidden="true"></i><strong>Small batch pieces</strong><span>No restocks when a drop is gone</span></div><div class="trust-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><strong>Secure checkout</strong><span>Protected payments with Paystack</span></div></section>
 
 <footer>
   <div class="wrap">
@@ -312,50 +382,60 @@
   };
 
   const PRODUCTS = [
-    {id:1, name:"Raime cap", cat:"Hoodies", price:128, image:"clothes image/Screenshot (23).png"},
-    {id:2, name:"Raime Tee", cat:"Tees", price:58, image:"clothes image/Screenshot (24).png"},
-    {id:3, name:"Raime Cargo", cat:"Bottoms", price:148, image:"clothes image/Screenshot (26).png"},
-    {id:4, name:"Raime Cap", cat:"Accessories", price:46, image:"clothes image/Screenshot (27).png"},
-    {id:5, name:"Raime Jacket", cat:"Outerwear", price:210, image:"clothes image/Screenshot (28).png"},
-    {id:6, name:"Raime Classic Tee", cat:"Tees", price:58, image:"clothes image/Screenshot (29).png"},
-    {id:7, name:"Raime Streetwear", cat:"Hoodies", price:138, image:"clothes image/wearing my brand.png"},
-    {id:8, name:"Raime Shorts", cat:"Bottoms", price:88, image:"clothes image/Screenshot (30).png"},
-    {id:9, name:"Raime Pulse Tee", cat:"Tees", price:62, image:"clothes image/Screenshot (31).png"},
-    {id:10, name:"Raime Run Hoodie", cat:"Hoodies", price:142, image:"clothes image/Screenshot (32).png"},
-    {id:11, name:"Raime Layer", cat:"Outerwear", price:220, image:"clothes image/Screenshot (34).png"},
-    {id:12, name:"Raime Session Cap", cat:"Accessories", price:52, image:"clothes image/Screenshot (35) - Copy.png"},
-    {id:13, name:"Raime Drift", cat:"Outerwear", price:198, image:"clothes image/Screenshot (35).png"},
-    {id:14, name:"Raime Set", cat:"Bottoms", price:156, image:"clothes image/Screenshot (36).png"},
-    {id:15, name:"Raime Signal", cat:"Tees", price:64, image:"clothes image/Screenshot (37).png"},
-    {id:16, name:"Raime Zip", cat:"Hoodies", price:174, image:"clothes image/Screenshot (38).png"},
-    {id:17, name:"Raime Motion", cat:"Outerwear", price:188, image:"clothes image/Screenshot (39).png"},
-    {id:18, name:"Raime Track", cat:"Bottoms", price:146, image:"clothes image/Screenshot (40).png"},
-    {id:19, name:"Raime Frame Tee", cat:"Tees", price:66, image:"clothes image/Screenshot (41).png"},
-    {id:20, name:"Raime Block", cat:"Hoodies", price:180, image:"clothes image/Screenshot (42).png"},
-    {id:21, name:"Raime Flight", cat:"Outerwear", price:212, image:"clothes image/Screenshot (43).png"},
-    {id:22, name:"Raime Apex", cat:"Accessories", price:54, image:"clothes image/Screenshot (44).png"},
-    {id:23, name:"Raime Grid", cat:"Tees", price:68, image:"clothes image/Screenshot (45).png"},
-    {id:24, name:"Raime Stack", cat:"Bottoms", price:152, image:"clothes image/Screenshot (46).png"},
-    {id:25, name:"Raime Night", cat:"Hoodies", price:176, image:"clothes image/Screenshot (47).png"},
-    {id:26, name:"Raime Fold", cat:"Accessories", price:56, image:"clothes image/Screenshot (48).png"},
-    {id:27, name:"Raime Drop", cat:"Tees", price:70, image:"clothes image/Screenshot (49).png"},
-    {id:28, name:"Raime Pulse", cat:"Outerwear", price:214, image:"clothes image/Screenshot (50).png"},
-    {id:29, name:"Raime Work", cat:"Bottoms", price:158, image:"clothes image/Screenshot (51).png"},
-    {id:30, name:"Raime Icon", cat:"Hoodies", price:182, image:"clothes image/Screenshot (52).png"},
-    {id:31, name:"Raime Shade", cat:"Accessories", price:60, image:"clothes image/Screenshot (53).png"},
-    {id:32, name:"Raime Edge", cat:"Tees", price:72, image:"clothes image/Screenshot (54).png"},
-    {id:33, name:"Raime Loom", cat:"Hoodies", price:186, image:"clothes image/5bb5c3d9-d419-48f4-821e-d696c7e4a72a.png"},
-    {id:34, name:"Raime Alpine Pullover", cat:"Outerwear", price:194, image:"clothes image/exmpleeee.png"}
+    {id:1, name:"Silva Logo Trucker Cap", cat:"Accessories", price:128, image:"clothes image/Screenshot (23).png"},
+    {id:2, name:"Camo Silva Tracksuit", cat:"Sets", price:58, image:"clothes image/Screenshot (24).png"},
+    {id:3, name:"Silva Star Tank", cat:"Tees", price:148, image:"clothes image/Screenshot (26).png"},
+    {id:4, name:"Silva Drip Tank", cat:"Tees", price:46, image:"clothes image/Screenshot (27).png"},
+    {id:5, name:"Camo Military Cap", cat:"Accessories", price:210, image:"clothes image/Screenshot (28).png"},
+    {id:6, name:"Silva Drip Hoodie", cat:"Hoodies", price:58, image:"clothes image/Screenshot (29).png"},
+    {id:7, name:"Built Different Portrait Tee", cat:"Tees", price:138, image:"clothes image/wearing my brand.png"},
+    {id:8, name:"Silva Script Tank", cat:"Tees", price:88, image:"clothes image/Screenshot (30).png"},
+    {id:9, name:"Built Different Graphic Tee", cat:"Tees", price:62, image:"clothes image/Screenshot (31).png"},
+    {id:10, name:"Silva 88 Polo", cat:"Tees", price:142, image:"clothes image/Screenshot (32).png"},
+    {id:11, name:"Silva Script Raglan Tee", cat:"Tees", price:220, image:"clothes image/Screenshot (34).png"},
+    {id:12, name:"Silva Graffiti Trucker Cap", cat:"Accessories", price:52, image:"clothes image/Screenshot (35) - Copy.png"},
+    {id:13, name:"Silva Logo Track Pants", cat:"Bottoms", price:198, image:"clothes image/Screenshot (35).png"},
+    {id:14, name:"Silva Track Tee", cat:"Tees", price:156, image:"clothes image/Screenshot (36).png"},
+    {id:15, name:"Silva Portrait Tee", cat:"Tees", price:64, image:"clothes image/Screenshot (37).png"},
+    {id:16, name:"Silva Drip Performance Tee", cat:"Tees", price:174, image:"clothes image/Screenshot (38).png"},
+    {id:17, name:"Silva Drip Rugby Pullover", cat:"Outerwear", price:188, image:"clothes image/Screenshot (39).png"},
+    {id:18, name:"Silva Drip Denim Shorts", cat:"Bottoms", price:146, image:"clothes image/Screenshot (40).png"},
+    {id:19, name:"Silva Camo Zip Hoodie", cat:"Hoodies", price:66, image:"clothes image/Screenshot (41).png"},
+    {id:20, name:"Silva Icon Long Sleeve", cat:"Tees", price:180, image:"clothes image/Screenshot (42).png"},
+    {id:21, name:"Silva Logo Layered Tee", cat:"Tees", price:212, image:"clothes image/Screenshot (43).png"},
+    {id:22, name:"Silva Panel Sweatpants", cat:"Bottoms", price:54, image:"clothes image/Screenshot (44).png"},
+    {id:23, name:"Silva 88 Raglan Tee", cat:"Tees", price:68, image:"clothes image/Screenshot (45).png"},
+    {id:24, name:"Silva Logo Sweatshirt", cat:"Hoodies", price:152, image:"clothes image/Screenshot (46).png"},
+    {id:25, name:"Silva Logo Crewneck", cat:"Hoodies", price:176, image:"clothes image/Screenshot (47).png"},
+    {id:26, name:"Silva Drip Beanie", cat:"Accessories", price:56, image:"clothes image/Screenshot (48).png"},
+    {id:27, name:"Silva Icon Baseball Tee", cat:"Tees", price:70, image:"clothes image/Screenshot (49).png"},
+    {id:28, name:"Silva 23 Football Jersey", cat:"Tees", price:214, image:"clothes image/Screenshot (50).png"},
+    {id:29, name:"Silva Graffiti Beanie", cat:"Accessories", price:158, image:"clothes image/Screenshot (51).png"},
+    {id:30, name:"Silva Drip Sweatpants", cat:"Bottoms", price:182, image:"clothes image/Screenshot (52).png"},
+    {id:31, name:"Silva Icon Long Sleeve", cat:"Tees", price:60, image:"clothes image/Screenshot (53).png"},
+    {id:32, name:"Silva Drip Long Sleeve", cat:"Tees", price:72, image:"clothes image/Screenshot (54).png"},
+    {id:33, name:"Silva Loom Hoodie", cat:"Hoodies", price:186, image:"clothes image/5bb5c3d9-d419-48f4-821e-d696c7e4a72a.png"},
+    {id:34, name:"Silva Alpine Pullover", cat:"Outerwear", price:194, image:"clothes image/exmpleeee.png"}
   ];
 
 
 
-  const CATEGORIES = ["All","Hoodies","Tees","Bottoms","Outerwear","Accessories"];
+  const CATEGORIES = ["All","Hoodies","Tees","Bottoms","Sets","Outerwear","Accessories"];
   let activeCat = "All";
+  let searchTerm = "";
+  let sortMode = "featured";
   let cart = {};
   let ratings = JSON.parse(localStorage.getItem('raimeRatings') || '{}');
 
   function fmt(n){ return "₦" + (n * NAIRA_MULTIPLIER).toLocaleString(); }
+
+  function getProductDetails(product){
+    const isAccessory = product.cat === "Accessories";
+    const sizes = isAccessory ? "One size" : product.cat === "Bottoms" ? "S - XXL" : "S - XXL";
+    const colors = /camo/i.test(product.name) ? ["Camo", "Black"] : /white|alpine/i.test(product.name) ? ["White", "Black"] : ["Black", "White"];
+    const swatches = { Black: "#15161B", White: "#F7F5EF", Camo: "#667052" };
+    return {sizes, colors, swatches};
+  }
 
   function renderFilters(){
     const el = document.getElementById('filters');
@@ -367,13 +447,27 @@
 
   function renderGrid(){
     const grid = document.getElementById('productGrid');
-    const items = PRODUCTS.filter(p => activeCat==="All" || p.cat===activeCat);
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const items = PRODUCTS.filter(p => {
+      const matchesCategory = activeCat === "All" || p.cat === activeCat;
+      const matchesSearch = !normalizedSearch || `${p.name} ${p.cat}`.toLowerCase().includes(normalizedSearch);
+      return matchesCategory && matchesSearch;
+    }).sort((a,b)=>{
+      if(sortMode === "low") return a.price - b.price;
+      if(sortMode === "high") return b.price - a.price;
+      if(sortMode === "name") return a.name.localeCompare(b.name);
+      if(sortMode === "newest") return b.id - a.id;
+      return a.id - b.id;
+    });
+    document.getElementById('resultCount').textContent = `${items.length} ${items.length === 1 ? 'piece' : 'pieces'}`;
     grid.classList.remove('in');
-    grid.innerHTML = items.map(p => `
+    grid.innerHTML = items.length ? items.map(p => `
       <div class="card">
         <div class="card-art">
           <span class="tag-corner">SD</span>
-          <img src="${p.image}" alt="${p.name}">
+          ${p.id <= 8 ? '<span class="card-badge">New</span>' : p.id % 7 === 0 ? '<span class="card-badge">Limited</span>' : ''}
+          <a class="details-toggle" href="product-details.html?id=${p.id}&name=${encodeURIComponent(p.name)}&cat=${encodeURIComponent(p.cat)}&price=${p.price}&image=${encodeURIComponent(p.image)}">Details</a>
+          <img class="product-image" src="${p.image}" alt="${p.name}">
           <div class="rating" aria-label="Rate ${p.name}">
             ${[1,2,3,4,5].map(star => `<button type="button" class="${star <= (ratings[p.id] || 4) ? 'active' : ''}" data-rating="${star}" data-id="${p.id}" aria-label="${star} star${star === 1 ? '' : 's'}">★</button>`).join('')}
           </div>
@@ -387,7 +481,7 @@
           </div>
         </div>
       </div>
-    `).join('');
+    `).join('') : '<div class="empty-state"><h3>No pieces found</h3><p>Try another search or reset your category filter.</p></div>';
     grid.querySelectorAll('.add-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const id = Number(btn.dataset.id);
@@ -523,6 +617,14 @@
     e.preventDefault();
     document.getElementById('foot-note').textContent = "You're on the list — we'll email you when Drop 005 lands.";
     e.target.reset();
+  });
+  document.getElementById('productSearch').addEventListener('input', (event)=>{
+    searchTerm = event.target.value;
+    renderGrid();
+  });
+  document.getElementById('productSort').addEventListener('change', (event)=>{
+    sortMode = event.target.value;
+    renderGrid();
   });
 
   renderFilters();
