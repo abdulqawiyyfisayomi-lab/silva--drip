@@ -51,7 +51,6 @@
   .page-head{background:var(--ink); color:var(--bone); padding:70px 0 44px; text-align:center;}
   .page-head .eyebrow{color:var(--orange); font-weight:600; font-size:0.85rem; margin-bottom:14px;}
   .page-head h1{font-size:clamp(2.1rem,6vw,3.4rem); text-transform:uppercase;}
-
   /* AUTH CARD */
   .auth-section{padding:56px 0 100px; display:flex; justify-content:center;}
   .auth-card{width:100%; max-width:420px; background:#fff; border:1px solid var(--line-dark);}
@@ -114,7 +113,7 @@
   .loader-screen{
     position:fixed; inset:0; background:#15161B; color:#EDE8DD; display:flex; align-items:center; justify-content:center; z-index:120; transition:opacity .9s ease, visibility .9s ease;
   }
-  .loader-screen.hidden{ opacity:0; visibility:hidden; }
+  .loader-screen.hidden{ opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
   .loader-inner{ display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; }
   .loader-logo-wrap{ position:relative; width:140px; height:140px; display:flex; align-items:center; justify-content:center; }
   .loader-glow{ position:absolute; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle, rgba(255,90,31,0.45), rgba(255,90,31,0) 65%); filter:blur(18px); opacity:0; animation:glowIn .8s ease .2s forwards; }
@@ -127,9 +126,28 @@
   @keyframes textReveal{ to{opacity:1; transform:translateY(0);} }
   @keyframes barReveal{ to{opacity:1;} }
   @keyframes loadSlide{ 0%{transform:translateX(-120%);} 100%{transform:translateX(320%);} }
+  ::selection{background:var(--orange);color:var(--ink);}
+  :focus-visible{outline:3px solid var(--orange);outline-offset:3px;}
+  .announcement{background:var(--ink);color:var(--bone);text-align:center;padding:8px 16px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav{background:rgba(237,232,221,.92);backdrop-filter:blur(14px);}
+  .logo{display:flex;align-items:center;gap:3px;}
+  .logo-mark{width:28px;height:28px;object-fit:contain;margin-right:5px;}
+  .page-head{position:relative;overflow:hidden;padding:72px 0 48px;text-align:left;}
+  .page-head::after{content:'JOIN';position:absolute;right:5%;bottom:-38px;color:rgba(237,232,221,.08);font-family:'Archivo Black';font-size:9rem;line-height:1;pointer-events:none;}
+  .page-head .wrap{position:relative;z-index:1;}
+  .page-head-logo{width:92px;height:92px;object-fit:contain;margin:0 0 22px;filter:drop-shadow(9px 10px 0 #FF5A1F);}
+  .auth-section{position:relative;padding:72px 0 110px;}
+  .auth-section::before{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background-image:radial-gradient(rgba(21,22,27,.11) 1px,transparent 1px);background-size:18px 18px;opacity:.2;pointer-events:none;}
+  .auth-card{position:relative;z-index:1;}
+  .tab-btn{transition:color .15s ease,background-color .15s ease;}
+  .tab-btn:hover{background:rgba(255,90,31,.08);}
+  .submit-btn{display:flex;align-items:center;justify-content:center;gap:9px;}
+  .account-view{background:#fff;}
+  @media(max-width:760px){.announcement{font-size:.62rem;padding:7px 10px}.page-head{padding:54px 0 42px}.page-head::after{font-size:5rem;bottom:-4px}.page-head-logo{width:76px;height:76px}.auth-section{padding:54px 18px 86px}}
 </style>
 </head>
 <body>
+<div class="announcement">Free shipping over ₦150,000 · Drop 004 is live</div>
 
 <div class="loader-screen" id="loaderScreen">
   <div class="loader-inner">
@@ -144,7 +162,7 @@
 
 <nav class="nav">
   <div class="wrap nav-inner">
-    <a href="index_2.html" class="logo">SILVA<span>·</span>DRIP</a>
+    <a href="index_2.html" class="logo"><img class="logo-mark" src="silva logo.png" alt="">SILVA<span>·</span>DRIP</a>
     <div class="nav-right">
       <ul class="nav-links">
         <li><a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i>Shop</a></li>
@@ -165,8 +183,8 @@
 </nav>
 
 <div class="page-head">
-  <img src="silva logo.png" alt="" style="width: 100px; height: 100px; margin-bottom: 20px;">
   <div class="wrap">
+    <img class="page-head-logo" src="silva logo.png" alt="Silva Drip logo">
     <div class="eyebrow">Members get early access to drops</div>
     <h1>Your account</h1>
   </div>
@@ -263,8 +281,8 @@
 
   // In-memory "database" of accounts for this session only.
   // A real site would replace this with actual backend authentication.
-  const users = [];
-  let currentUser = null;
+  const users = JSON.parse(localStorage.getItem('silvaDripUsers') || '[]');
+  let currentUser = JSON.parse(localStorage.getItem('silvaDripAuth') || 'null');
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -334,6 +352,7 @@
     if(hasError) return;
 
     users.push({ name, email, password });
+    localStorage.setItem('silvaDripUsers', JSON.stringify(users));
     document.getElementById('signupNote').className = 'form-note success';
     document.getElementById('signupNote').textContent = 'Account created. Sign in below.';
     signupForm.reset();
@@ -369,7 +388,10 @@
     }
 
     currentUser = user;
+    localStorage.setItem('silvaDripAuth', JSON.stringify({name: user.name, email: user.email}));
     showAccount(user);
+    const returnTo = new URLSearchParams(location.search).get('return');
+    if(returnTo) setTimeout(()=> location.replace(returnTo), 500);
   });
 
   document.getElementById('forgotBtn').addEventListener('click', ()=>{
@@ -389,12 +411,15 @@
 
   document.getElementById('logoutBtn').addEventListener('click', ()=>{
     currentUser = null;
+    localStorage.removeItem('silvaDripAuth');
     document.getElementById('accountView').classList.remove('show');
     document.getElementById('tabs').style.display = 'flex';
     document.getElementById('authBody').style.display = 'block';
     loginForm.reset();
     document.getElementById('loginNote').textContent = '';
   });
+
+  if(currentUser) showAccount(currentUser);
 
   // Mobile nav
 </script>
