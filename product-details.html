@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product details | Silva Drip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{--ink:#15161B;--bone:#EDE8DD;--bone-dim:#DCD6C7;--orange:#FF5A1F;--steel:#6B7280;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bone);color:var(--ink);font-family:'Archivo',sans-serif;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 28px;}
+  .nav{border-bottom:1px solid rgba(21,22,27,.14);}
+  .nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:1.25rem;text-decoration:none;color:var(--ink);}
+  .logo span{color:var(--orange);}
+  .back{font-size:.85rem;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--orange);padding-bottom:4px;}
+  main{padding:64px 0 80px;}
+  .product-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:64px;align-items:start;}
+  .product-visual{background:#f2efe9;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .product-visual img{width:100%;height:100%;object-fit:cover;display:block;}
+  .eyebrow{color:var(--orange);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:0 0 14px;}
+  h1{font-family:'Archivo Black',sans-serif;font-size:clamp(2rem,5vw,4.5rem);line-height:.95;margin:0 0 18px;}
+  .price{font-size:1.25rem;font-weight:700;margin:0 0 34px;}
+  .spec-section{border-top:1px solid rgba(21,22,27,.2);padding:20px 0;}
+  .spec-label{display:block;color:var(--steel);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;}
+  .spec-value{font-size:1rem;font-weight:600;}
+  .color-list{display:flex;gap:14px;flex-wrap:wrap;}
+  .color-chip{display:flex;align-items:center;gap:7px;font-size:.9rem;font-weight:600;}
+  .color-swatch{width:20px;height:20px;border:1px solid rgba(21,22,27,.35);border-radius:50%;}
+  .shop-link{display:inline-block;margin-top:20px;background:var(--ink);color:var(--bone);padding:14px 22px;text-decoration:none;font-weight:700;}
+  .shop-link:hover{background:var(--orange);color:var(--ink);}
+  .announcement{background:var(--ink);color:var(--bone);text-align:center;padding:8px 16px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav{background:rgba(237,232,221,.92);backdrop-filter:blur(14px);}
+  .product-visual{position:relative;box-shadow:18px 18px 0 var(--orange);}
+  .visual-label{position:absolute;left:16px;bottom:16px;background:var(--ink);color:var(--bone);padding:6px 9px;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+  .product-nav{display:flex;justify-content:space-between;gap:18px;margin-bottom:42px;}
+  .text-link{font-size:.82rem;font-weight:700;text-decoration:none;border-bottom:1px solid var(--orange);padding-bottom:4px;}
+  .detail-kicker{margin:0;}
+  .size-options{display:flex;gap:8px;flex-wrap:wrap;}
+  .size-option{border:1px solid rgba(21,22,27,.35);background:transparent;color:var(--ink);padding:10px 14px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;}
+  .size-option.active,.size-option:hover{border-color:var(--ink);background:var(--ink);color:var(--bone);}
+  .delivery-note{display:flex;gap:10px;align-items:flex-start;margin-top:28px;padding:16px;background:rgba(220,214,199,.45);font-size:.8rem;line-height:1.5;}
+  .delivery-note i{color:var(--orange);margin-top:2px;}
+  .detail-footer{border-top:1px solid rgba(21,22,27,.14);margin-top:72px;padding-top:22px;color:var(--steel);font-size:.75rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .empty{padding:80px 0;text-align:center;}
+  @media(max-width:720px){main{padding:36px 0 60px}.product-layout{grid-template-columns:1fr;gap:32px}.product-visual{max-height:70vh;box-shadow:10px 10px 0 var(--orange)}.product-nav{margin-bottom:28px}.nav-inner{height:64px}.wrap{padding:0 18px}.detail-footer{margin-top:42px}}
+</style>
+</head>
+<body>
+<div class="announcement">Free shipping over ₦150,000 · Drop 004 is live</div>
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index_2.html">SILVA<span>·</span>DRIP</a>
+    <a class="back" href="index_2.html#shop">Back to shop</a>
+  </div>
+</nav>
+<main>
+  <div class="wrap" id="details"></div>
+</main>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const product = {
+    name: params.get('name'),
+    category: params.get('cat'),
+    price: Number(params.get('price')),
+    image: params.get('image')
+  };
+  const details = document.getElementById('details');
+  const isAccessory = product.category === 'Accessories';
+  const sizes = isAccessory ? 'One size' : 'S - XXL';
+  const colors = /camo/i.test(product.name || '') ? ['Camo', 'Black'] : /white|alpine/i.test(product.name || '') ? ['White', 'Black'] : ['Black', 'White'];
+  const swatches = {Black:'#15161B', White:'#F7F5EF', Camo:'#667052'};
+  const price = '₦' + (product.price * 1000).toLocaleString();
+
+  if (!product.name || !product.image) {
+    details.innerHTML = '<div class="empty"><h1>Product not found</h1><a class="shop-link" href="index_2.html#shop">Return to shop</a></div>';
+  } else {
+    document.title = product.name + ' | Silva Drip';
+    details.innerHTML = `
+      <div class="product-nav"><a class="text-link" href="index_2.html#shop">← Back to shop</a><span class="eyebrow detail-kicker">Drop 004 / ${product.category}</span></div>
+      <section class="product-layout">
+        <div class="product-visual"><img src="${product.image}" alt="${product.name}"><span class="visual-label">Silva Drip product image</span></div>
+        <div>
+          <h1>${product.name}</h1>
+          <p class="price">${price}</p>
+          <div class="spec-section"><span class="spec-label">Choose your size</span><div class="size-options">${(isAccessory ? ['One size'] : ['S','M','L','XL','XXL']).map((size,index) => `<button class="size-option${index === 1 ? ' active' : ''}" type="button">${size}</button>`).join('')}</div></div>
+          <div class="spec-section"><span class="spec-label">Available colours</span><div class="color-list">${colors.map(color => `<span class="color-chip"><span class="color-swatch" style="background:${swatches[color]}"></span>${color}</span>`).join('')}</div></div>
+          <div class="delivery-note"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><span>Dispatches within 24 hours. Free shipping applies to orders over ₦150,000.</span></div>
+          <a class="shop-link" href="index_2.html#shop">Continue shopping</a>
+        </div>
+      </section>
+      <div class="detail-footer"><span>Small batch / no restocks</span><span>Secure checkout powered by Paystack</span></div>`;
+    details.querySelectorAll('.size-option').forEach(button => button.addEventListener('click', ()=>{
+      details.querySelectorAll('.size-option').forEach(option => option.classList.remove('active'));
+      button.classList.add('active');
+    }));
+  }
+</script>
+</body>
+</html>
