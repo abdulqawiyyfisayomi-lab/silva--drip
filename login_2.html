@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Silva Drip</title>
+<link rel="icon" href="silva logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --ink:#15161B; --bone:#EDE8DD; --bone-dim:#DCD6C7;
+    --orange:#FF5A1F; --rust:#7A2E12; --steel:#6B7280;
+    --line-dark: rgba(21,22,27,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bone); color:var(--ink); font-family:'Archivo',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Archivo Black',sans-serif; margin:0; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  button, input{font-family:inherit;}
+  button{cursor:pointer;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  /* NAV */
+  .nav{position:sticky; top:0; z-index:40; background:var(--bone); border-bottom:1px solid var(--line-dark);}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; height:72px; position:relative;}
+  .logo{font-family:'Archivo Black'; font-size:1.25rem; letter-spacing:0.02em; text-decoration:none;}
+  .logo span{color:var(--orange);}
+  .nav-right{display:flex; align-items:center; gap:18px;}
+  .nav-links{display:flex; gap:28px; list-style:none; margin:0; padding:0; align-items:center;}
+  .nav-links a{text-decoration:none; font-size:0.92rem; font-weight:500; position:relative; padding-bottom:4px;}
+  .nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--orange); transition:width .2s ease;}
+  .nav-links a:hover::after{width:100%;}
+  .nav-links a.active{color:var(--orange);}
+  .nav-links a.active::after{width:100%;}
+  .cart-btn{display:flex; align-items:center; gap:8px; background:var(--ink); color:var(--bone); border:none; padding:10px 16px; font-size:0.88rem; font-weight:600; text-decoration:none;}
+  .mobile-bottom-nav{display:none;}
+  @media(max-width:760px){
+    body{padding-bottom:72px;}
+    .nav-inner{height:72px; flex-wrap:nowrap; gap:8px;}
+    .nav-right{width:auto; justify-content:flex-end; gap:10px;}
+    .nav-links{display:none;}
+    .mobile-bottom-nav{position:fixed; right:0; bottom:0; left:0; z-index:40; display:grid; grid-template-columns:repeat(4,1fr); background:var(--bone); border-top:1px solid var(--line-dark); box-shadow:0 -6px 18px rgba(21,22,27,0.08);}
+    .mobile-bottom-nav a{display:flex; min-height:68px; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:var(--ink); text-decoration:none; font-size:0.7rem; font-weight:600;}
+    .mobile-bottom-nav a i{color:var(--orange); font-size:1rem;}
+    .mobile-bottom-nav a.active{color:var(--orange);}
+  }
+
+  /* PAGE HEAD */
+  .page-head{background:var(--ink); color:var(--bone); padding:70px 0 44px; text-align:center;}
+  .page-head .eyebrow{color:var(--orange); font-weight:600; font-size:0.85rem; margin-bottom:14px;}
+  .page-head h1{font-size:clamp(2.1rem,6vw,3.4rem); text-transform:uppercase;}
+
+  /* AUTH CARD */
+  .auth-section{padding:56px 0 100px; display:flex; justify-content:center;}
+  .auth-card{width:100%; max-width:420px; background:#fff; border:1px solid var(--line-dark);}
+  .tabs{display:flex; border-bottom:1px solid var(--line-dark);}
+  .tab-btn{flex:1; background:none; border:none; padding:18px 0; font-weight:700; font-size:0.95rem; color:var(--steel); border-bottom:2px solid transparent;}
+  .tab-btn.active{color:var(--ink); border-bottom:2px solid var(--orange);}
+  .auth-body{padding:30px 28px 32px;}
+  .auth-form{display:flex; flex-direction:column; gap:16px;}
+  .auth-form.hidden{display:none;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:0.8rem; font-weight:600; color:var(--steel);}
+  .field-input-wrap{position:relative;}
+  .field input{border:1px solid var(--ink); background:#fff; padding:13px 14px; font-size:0.95rem; width:100%;}
+  .field input:focus{outline:2px solid var(--orange); outline-offset:1px;}
+  .field input.error{border-color:var(--rust);}
+  .toggle-pw{position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:0.76rem; font-weight:700; color:var(--steel); padding:4px;}
+  .err-msg{font-size:0.78rem; color:var(--rust); min-height:1em;}
+  .row-between{display:flex; justify-content:space-between; align-items:center; font-size:0.82rem;}
+  .link-btn{background:none; border:none; padding:0; text-decoration:underline; font-size:0.82rem; color:var(--ink); font-weight:600;}
+  .submit-btn{background:var(--ink); color:var(--bone); border:none; padding:15px; font-weight:700; font-size:0.95rem; margin-top:4px;}
+  .submit-btn:hover{background:var(--orange); color:var(--ink);}
+  .form-note{font-size:0.85rem; min-height:1.2em; text-align:center;}
+  .form-note.success{color:#1a7a3e;}
+  .form-note.error{color:var(--rust);}
+
+  /* LOGGED IN STATE */
+  .account-view{display:none; padding:36px 28px; text-align:center;}
+  .account-view.show{display:block;}
+  .avatar{width:64px; height:64px; border-radius:50%; background:var(--orange); color:var(--ink); display:flex; align-items:center; justify-content:center; font-family:'Archivo Black'; font-size:1.4rem; margin:0 auto 18px;}
+  .account-view h2{font-size:1.4rem; margin-bottom:6px;}
+  .account-view p{color:var(--steel); font-size:0.92rem; margin-bottom:26px;}
+  .logout-btn{background:none; border:1px solid var(--ink); padding:12px 24px; font-weight:700; font-size:0.9rem;}
+  .logout-btn:hover{background:var(--ink); color:var(--bone);}
+
+  footer{padding:40px 0 30px; background:var(--bone-dim);}
+  .copyright{font-size:0.8rem; color:var(--steel); text-align:center;}
+
+  /* ANIMATION */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+  .page-head .eyebrow, .page-head h1{opacity:0; animation:head-in .7s ease forwards;}
+  .page-head h1{animation-delay:.15s;}
+  @keyframes head-in{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .auth-card{opacity:0; animation:card-in .5s ease forwards; animation-delay:.2s;}
+  @keyframes card-in{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+
+  .tab-btn, .submit-btn, .send-btn, .logout-btn, .toggle-pw{transition:transform .15s ease, background-color .15s ease, color .15s ease;}
+  .submit-btn:active, .logout-btn:active{transform:scale(0.96);}
+
+  .field input.error{animation:shake .4s ease;}
+  @keyframes shake{ 10%,90%{transform:translateX(-1px);} 20%,80%{transform:translateX(2px);} 30%,50%,70%{transform:translateX(-4px);} 40%,60%{transform:translateX(4px);} }
+
+  .account-view.show{animation:account-in .45s cubic-bezier(.34,1.4,.64,1) both;}
+  @keyframes account-in{ from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
+  .avatar{animation:avatar-pop .5s cubic-bezier(.34,1.56,.64,1) both; animation-delay:.1s;}
+  @keyframes avatar-pop{ from{transform:scale(0);} to{transform:scale(1);} }
+
+  .loader-screen{
+    position:fixed; inset:0; background:#15161B; color:#EDE8DD; display:flex; align-items:center; justify-content:center; z-index:120; transition:opacity .9s ease, visibility .9s ease;
+  }
+  .loader-screen.hidden{ opacity:0; visibility:hidden; }
+  .loader-inner{ display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; }
+  .loader-logo-wrap{ position:relative; width:140px; height:140px; display:flex; align-items:center; justify-content:center; }
+  .loader-glow{ position:absolute; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle, rgba(255,90,31,0.45), rgba(255,90,31,0) 65%); filter:blur(18px); opacity:0; animation:glowIn .8s ease .2s forwards; }
+  .loader-logo{ width:120px; height:120px; object-fit:contain; opacity:0; transform:scale(0.7) translateY(18px); animation:logoReveal 1.2s cubic-bezier(.2,.7,.2,1) forwards; }
+  .loader-text{ font-family:'Archivo Black',sans-serif; letter-spacing:0.18em; text-transform:uppercase; font-size:0.8rem; opacity:0; transform:translateY(10px); animation:textReveal .8s ease .8s forwards; }
+  .loader-bar{ width:220px; height:2px; background:rgba(237,232,221,0.2); overflow:hidden; position:relative; opacity:0; animation:barReveal .5s ease 1s forwards; }
+  .loader-bar::after{ content:""; position:absolute; inset:0; width:40%; background:#FF5A1F; animation:loadSlide 1.8s ease-in-out infinite; }
+  @keyframes logoReveal{ 0%{opacity:0; transform:scale(0.7) translateY(18px);} 60%{opacity:1; transform:scale(1.05) translateY(0);} 100%{opacity:1; transform:scale(1) translateY(0);} }
+  @keyframes glowIn{ 0%{opacity:0; transform:scale(0.8);} 100%{opacity:1; transform:scale(1);} }
+  @keyframes textReveal{ to{opacity:1; transform:translateY(0);} }
+  @keyframes barReveal{ to{opacity:1;} }
+  @keyframes loadSlide{ 0%{transform:translateX(-120%);} 100%{transform:translateX(320%);} }
+</style>
+</head>
+<body>
+
+<div class="loader-screen" id="loaderScreen">
+  <div class="loader-inner">
+    <div class="loader-logo-wrap">
+      <div class="loader-glow"></div>
+      <img src="silva logo.png" alt="Silva Drip" class="loader-logo">
+    </div>
+    <div class="loader-text">Silva Drip</div>
+    <div class="loader-bar"></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index_2.html" class="logo">SILVA<span>·</span>DRIP</a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i>Shop</a></li>
+        <li><a href="about_1.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>About</a></li>
+        <li><a href="contact_1.html"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contact</a></li>
+        <li><a href="login_2.html" class="active" aria-current="page"><i class="fa-solid fa-user" aria-hidden="true"></i>Account</a></li>
+      </ul>
+      <a href="index_2.html#shop" class="cart-btn">Shop</a>
+    </div>
+  </div>
+</nav>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i><span>Shop</span></a>
+  <a href="about_1.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>About</span></a>
+  <a href="contact_1.html"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Contact</span></a>
+  <a href="login_2.html" class="active" aria-current="page"><i class="fa-solid fa-user" aria-hidden="true"></i><span>Account</span></a>
+</nav>
+
+<div class="page-head">
+  <img src="silva logo.png" alt="" style="width: 100px; height: 100px; margin-bottom: 20px;">
+  <div class="wrap">
+    <div class="eyebrow">Members get early access to drops</div>
+    <h1>Your account</h1>
+  </div>
+</div>
+
+<section class="auth-section">
+  <div class="auth-card">
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="login">Sign in</button>
+      <button class="tab-btn" data-tab="signup">Create account</button>
+    </div>
+
+    <div class="auth-body" id="authBody">
+
+      <form class="auth-form" id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" autocomplete="email">
+          <div class="err-msg" id="loginEmailErr"></div>
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <div class="field-input-wrap">
+            <input type="password" id="loginPassword" autocomplete="current-password">
+            <button type="button" class="toggle-pw" data-target="loginPassword">Show</button>
+          </div>
+          <div class="err-msg" id="loginPasswordErr"></div>
+        </div>
+        <div class="row-between">
+          <span></span>
+          <a href="forgot-password.html"><button type="button" class="link-btn" id="forgotBtn">Forgot password?</button></a>
+        </div>
+        <button type="submit" class="submit-btn">Sign in</button>
+        <div class="form-note" id="loginNote"></div>
+      </form>
+
+      <form class="auth-form hidden" id="signupForm" novalidate>
+        <div class="field">
+          <label for="signupName">Full name</label>
+          <input type="text" id="signupName" autocomplete="name">
+          <div class="err-msg" id="signupNameErr"></div>
+        </div>
+        <div class="field">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" autocomplete="email">
+          <div class="err-msg" id="signupEmailErr"></div>
+        </div>
+        <div class="field">
+          <label for="signupPassword">Password</label>
+          <div class="field-input-wrap">
+            <input type="password" id="signupPassword" autocomplete="new-password">
+            <button type="button" class="toggle-pw" data-target="signupPassword">Show</button>
+          </div>
+          <div class="err-msg" id="signupPasswordErr"></div>
+        </div>
+        <div class="field">
+          <label for="signupConfirm">Confirm password</label>
+          <div class="field-input-wrap">
+            <input type="password" id="signupConfirm" autocomplete="new-password">
+            <button type="button" class="toggle-pw" data-target="signupConfirm">Show</button>
+          </div>
+          <div class="err-msg" id="signupConfirmErr"></div>
+        </div>
+        <button type="submit" class="submit-btn">Create account</button>
+        <div class="form-note" id="signupNote"></div>
+      </form>
+
+    </div>
+
+    <div class="account-view" id="accountView">
+      <div class="avatar" id="avatarInitial">S</div>
+      <h2 id="welcomeName">Welcome back</h2>
+      <p id="welcomeEmail">you@example.com</p>
+      <button class="logout-btn" id="logoutBtn">Sign out</button>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="copyright">© 2026 Silva Drip. Demo account system — no real data is stored or transmitted.</div>
+  </div>
+</footer>
+
+<script>
+  const loaderScreen = document.getElementById('loaderScreen');
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{
+      loaderScreen.classList.add('hidden');
+    }, 1400);
+  });
+
+  // In-memory "database" of accounts for this session only.
+  // A real site would replace this with actual backend authentication.
+  const users = [];
+  let currentUser = null;
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function setError(id, msg){
+    document.getElementById(id).textContent = msg;
+  }
+  function clearErrors(ids){
+    ids.forEach(id => setError(id, ""));
+  }
+  function markInvalid(inputId){
+    const input = document.getElementById(inputId);
+    input.classList.remove('error');
+    void input.offsetWidth;
+    input.classList.add('error');
+  }
+  function clearInvalid(inputIds){
+    inputIds.forEach(id => document.getElementById(id).classList.remove('error'));
+  }
+
+  // Tabs
+  const tabs = document.getElementById('tabs');
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+  tabs.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabs.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      loginForm.classList.toggle('hidden', tab !== 'login');
+      signupForm.classList.toggle('hidden', tab !== 'signup');
+    });
+  });
+  function switchToLogin(prefillEmail){
+    tabs.querySelector('[data-tab="login"]').click();
+    if(prefillEmail) document.getElementById('loginEmail').value = prefillEmail;
+  }
+
+  // Show/hide password
+  document.querySelectorAll('.toggle-pw').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = document.getElementById(btn.dataset.target);
+      const isPw = target.type === 'password';
+      target.type = isPw ? 'text' : 'password';
+      btn.textContent = isPw ? 'Hide' : 'Show';
+    });
+  });
+
+  // Signup
+  signupForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    clearErrors(['signupNameErr','signupEmailErr','signupPasswordErr','signupConfirmErr']);
+    clearInvalid(['signupName','signupEmail','signupPassword','signupConfirm']);
+    document.getElementById('signupNote').textContent = '';
+
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+    let hasError = false;
+
+    if(!name){ setError('signupNameErr', 'Enter your name.'); markInvalid('signupName'); hasError = true; }
+    if(!EMAIL_RE.test(email)){ setError('signupEmailErr', 'Enter a valid email address.'); markInvalid('signupEmail'); hasError = true; }
+    else if(users.some(u => u.email === email)){ setError('signupEmailErr', 'An account with this email already exists.'); markInvalid('signupEmail'); hasError = true; }
+    if(password.length < 8){ setError('signupPasswordErr', 'Password must be at least 8 characters.'); markInvalid('signupPassword'); hasError = true; }
+    if(confirm !== password || !confirm){ setError('signupConfirmErr', 'Passwords do not match.'); markInvalid('signupConfirm'); hasError = true; }
+
+    if(hasError) return;
+
+    users.push({ name, email, password });
+    document.getElementById('signupNote').className = 'form-note success';
+    document.getElementById('signupNote').textContent = 'Account created. Sign in below.';
+    signupForm.reset();
+    setTimeout(()=> switchToLogin(email), 700);
+  });
+
+  // Login
+  loginForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    clearErrors(['loginEmailErr','loginPasswordErr']);
+    clearInvalid(['loginEmail','loginPassword']);
+    document.getElementById('loginNote').textContent = '';
+
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    let hasError = false;
+
+    if(!EMAIL_RE.test(email)){ setError('loginEmailErr', 'Enter a valid email address.'); markInvalid('loginEmail'); hasError = true; }
+    if(!password){ setError('loginPasswordErr', 'Enter your password.'); markInvalid('loginPassword'); hasError = true; }
+    if(hasError) return;
+
+    const user = users.find(u => u.email === email);
+    if(!user){
+      document.getElementById('loginNote').className = 'form-note error';
+      document.getElementById('loginNote').textContent = "No account found with that email — create one instead.";
+      markInvalid('loginEmail');
+      return;
+    }
+    if(user.password !== password){
+      setError('loginPasswordErr', 'Incorrect password.');
+      markInvalid('loginPassword');
+      return;
+    }
+
+    currentUser = user;
+    showAccount(user);
+  });
+
+  document.getElementById('forgotBtn').addEventListener('click', ()=>{
+    document.getElementById('loginNote').className = 'form-note';
+    document.getElementById('loginNote').textContent = "Password reset isn't wired up in this demo — connect a real auth provider for that.";
+  });
+
+  function showAccount(user){
+    document.getElementById('tabs').style.display = 'none';
+    document.getElementById('authBody').style.display = 'none';
+    const view = document.getElementById('accountView');
+    view.classList.add('show');
+    document.getElementById('avatarInitial').textContent = user.name.trim()[0].toUpperCase();
+    document.getElementById('welcomeName').textContent = `Welcome back, ${user.name.split(' ')[0]}`;
+    document.getElementById('welcomeEmail').textContent = user.email;
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click', ()=>{
+    currentUser = null;
+    document.getElementById('accountView').classList.remove('show');
+    document.getElementById('tabs').style.display = 'flex';
+    document.getElementById('authBody').style.display = 'block';
+    loginForm.reset();
+    document.getElementById('loginNote').textContent = '';
+  });
+
+  // Mobile nav
+</script>
+
+</body>
+</html>

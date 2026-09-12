@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Silva Drip</title>
+<link rel="icon" href="silva logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --ink:#15161B; --bone:#EDE8DD; --bone-dim:#DCD6C7;
+    --orange:#FF5A1F; --rust:#7A2E12; --steel:#6B7280;
+    --line-dark: rgba(21,22,27,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bone); color:var(--ink); font-family:'Archivo',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Archivo Black',sans-serif; margin:0; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  button, input, textarea{font-family:inherit;}
+  button{cursor:pointer;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  .nav{position:sticky; top:0; z-index:40; background:var(--bone); border-bottom:1px solid var(--line-dark);}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; height:72px; position:relative;}
+  .logo{font-family:'Archivo Black'; font-size:1.25rem; letter-spacing:0.02em; text-decoration:none;}
+  .logo span{color:var(--orange);}
+  .nav-right{display:flex; align-items:center; gap:18px;}
+  .nav-links{display:flex; gap:28px; list-style:none; margin:0; padding:0; align-items:center;}
+  .nav-links a{text-decoration:none; font-size:0.92rem; font-weight:500; position:relative; padding-bottom:4px; display:flex; align-items:center; gap:6px;}
+  .nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--orange); transition:width .2s ease;}
+  .nav-links a:hover::after{width:100%;}
+  .nav-links a.active{color:var(--orange);}
+  .nav-links a.active::after{width:100%;}
+  .cart-btn{display:flex; align-items:center; gap:8px; background:var(--ink); color:var(--bone); border:none; padding:10px 16px; font-size:0.88rem; font-weight:600; text-decoration:none;}
+  .mobile-bottom-nav{display:none;}
+  @media(max-width:760px){
+    body{padding-bottom:72px;}
+    .nav{position:sticky; top:0;}
+    .nav-inner{height:72px; flex-wrap:nowrap; gap:8px;}
+    .nav-right{width:auto; justify-content:flex-end; gap:10px;}
+    .nav-links{display:none;}
+    .mobile-bottom-nav{position:fixed; right:0; bottom:0; left:0; z-index:40; display:grid; grid-template-columns:repeat(4,1fr); background:var(--bone); border-top:1px solid var(--line-dark); box-shadow:0 -6px 18px rgba(21,22,27,0.08);}
+    .mobile-bottom-nav a{display:flex; min-height:68px; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:var(--ink); text-decoration:none; font-size:0.7rem; font-weight:600;}
+    .mobile-bottom-nav a i{color:var(--orange); font-size:1rem;}
+    .mobile-bottom-nav a.active{color:var(--orange);}
+  }
+
+  .page-head{background:var(--ink); color:var(--bone); padding:70px 0 50px; text-align:center;}
+  .page-head .eyebrow{color:var(--orange); font-weight:600; font-size:0.85rem; margin-bottom:14px;}
+  .page-head h1{font-size:clamp(2.2rem,6vw,4rem); text-transform:uppercase;}
+
+  .contact{padding:80px 0;}
+  .contact-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:start;}
+  @media(max-width:800px){ .contact-grid{grid-template-columns:1fr;} }
+
+  .info h2{font-size:clamp(1.5rem,3.2vw,2rem); margin-bottom:16px;}
+  .info p{color:#3a3a40; line-height:1.7; font-size:1rem; max-width:44ch; margin-bottom:26px;}
+  .info-row{display:flex; flex-direction:column; gap:4px; margin-bottom:20px;}
+  .info-row .lbl{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--steel); font-weight:600;}
+  .info-row .val{font-size:1rem; font-weight:500;}
+
+  form{display:flex; flex-direction:column; gap:16px;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:0.8rem; font-weight:600; color:var(--steel);}
+  .field input, .field textarea, .field select{
+    border:1px solid var(--ink); background:#fff; padding:13px 14px; font-size:0.95rem; width:100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--orange); outline-offset:1px;}
+  .field textarea{resize:vertical; min-height:130px;}
+  .send-btn{background:var(--ink); color:var(--bone); border:none; padding:15px 26px; font-weight:700; font-size:0.95rem; align-self:flex-start;}
+  .send-btn:hover{background:var(--orange); color:var(--ink);}
+  .send-note{font-size:0.9rem; color:var(--rust); min-height:1.2em;}
+
+  footer{padding:56px 0 34px; background:var(--bone-dim); margin-top:20px;}
+  .foot-grid{display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:36px;}
+  .foot-links{display:flex; gap:40px; flex-wrap:wrap;}
+  .foot-col h4{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:12px; color:var(--steel);}
+  .foot-col a{display:block; text-decoration:none; font-size:0.9rem; margin-bottom:8px;}
+  .copyright{border-top:1px solid var(--line-dark); padding-top:20px; font-size:0.8rem; color:var(--steel); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  /* ANIMATION */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+  .page-head .eyebrow, .page-head h1{opacity:0; animation:head-in .7s ease forwards;}
+  .page-head h1{animation-delay:.15s;}
+  @keyframes head-in{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  .send-btn{transition:transform .15s ease, background-color .15s ease, color .15s ease;}
+  .send-btn:active{transform:scale(0.96);}
+
+  .field input.shake, .field textarea.shake, .field select.shake{animation:shake .4s ease; border-color:var(--rust);}
+  @keyframes shake{ 10%,90%{transform:translateX(-1px);} 20%,80%{transform:translateX(2px);} 30%,50%,70%{transform:translateX(-4px);} 40%,60%{transform:translateX(4px);} }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index_2.html" class="logo">SILVA<span>·</span>DRIP</a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i>Shop</a></li>
+        <li><a href="about_1.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>About</a></li>
+        <li><a href="contact_1.html" class="active" aria-current="page"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contact</a></li>
+        <li><a href="login_2.html"><i class="fa-solid fa-user" aria-hidden="true"></i>Account</a></li>
+      </ul>
+      <a href="index_2.html#shop" class="cart-btn">Shop</a>
+    </div>
+  </div>
+</nav>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i><span>Shop</span></a>
+  <a href="about_1.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>About</span></a>
+  <a href="contact_1.html" class="active" aria-current="page"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Contact</span></a>
+  <a href="login_2.html"><i class="fa-solid fa-user" aria-hidden="true"></i><span>Account</span></a>
+</nav>
+
+<div class="page-head">
+        <img src="silva logo.png" alt="" style="width: 130px; height: 150px; margin-bottom: 2px; ">
+  <div class="wrap">
+    <div class="eyebrow">We reply within 2 days</div>
+    <h1>Get in touch</h1>
+  </div>
+</div>
+
+<section class="contact">
+  <div class="wrap contact-grid">
+    <div class="info reveal">
+      <h2>Questions about an order, a drop, or a collab?</h2>
+      <p>Send us a message and we'll get back to you. For order issues, include your order number so we can look it up faster.</p>
+      <div class="info-row"><span class="lbl">Email</span><span class="val">hello@silvadrip.com</span></div>
+      <div class="info-row"><span class="lbl">Instagram</span><span class="val">@silvadrip</span></div>
+      <div class="info-row"><span class="lbl">Based in</span><span class="val">Lagos, Nigeria</span></div>
+    </div>
+
+    <form id="contactForm" class="reveal">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="field">
+        <label for="topic">What's this about</label>
+        <select id="topic">
+          <option>Order support</option>
+          <option>Sizing question</option>
+          <option>Wholesale / collab</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" required></textarea>
+      </div>
+      <button type="submit" class="send-btn">Send message</button>
+      <div class="send-note" id="sendNote"></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4 style="font-family:'Archivo Black'; font-size:1.1rem; margin-bottom:8px;">SILVA·DRIP</h4>
+        <p style="color:var(--steel); font-size:0.9rem; max-width:32ch;">Small-batch streetwear, printed in-house, dropped whenever it's ready.</p>
+      </div>
+      <div class="foot-links">
+        <div class="foot-col">
+          <h4>Shop</h4>
+          <a href="index.html#shop">Hoodies</a>
+          <a href="index.html#shop">Tees</a>
+          <a href="index.html#shop">Bottoms</a>
+        </div>
+        <div class="foot-col">
+          <h4>Brand</h4>
+          <a href="about_1.html">About</a>
+          <a href="contact_1.html">Contact</a>
+        </div>
+        <div class="foot-col">
+          <h4>Follow</h4>
+          <a href="https://www.instagram.com/sil.vadrip?igsh=MTltdTQ2djV5ZnZqYw%3D%3D&utm_source=qr">Instagram</a>
+          <a href="#https://vt.tiktok.com/ZSQnn4XLs/">TikTok</a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <span>© 2026 Silva Drip. All rights reserved.</span>
+      <span>Demo store — not a live checkout.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('contactForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const required = ['name','email','message'];
+    let hasError = false;
+    required.forEach(id=>{
+      const field = document.getElementById(id);
+      if(!field.value.trim()){
+        hasError = true;
+        field.classList.remove('shake'); void field.offsetWidth; field.classList.add('shake');
+      }
+    });
+    if(hasError){
+      document.getElementById('sendNote').textContent = 'Fill in the highlighted fields.';
+      return;
+    }
+    document.getElementById('sendNote').textContent = "Message sent — we'll get back to you within 2 days.";
+    e.target.reset();
+  });
+
+  const revealObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ entry.target.classList.add('in'); revealObserver.unobserve(entry.target); }
+    });
+  }, {threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+
+</body>
+</html>

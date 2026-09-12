@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Silva Drip</title>
+<link rel="icon" href="silva logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --ink:#15161B; --bone:#EDE8DD; --bone-dim:#DCD6C7;
+    --orange:#FF5A1F; --rust:#7A2E12; --steel:#6B7280;
+    --line: rgba(237,232,221,0.14); --line-dark: rgba(21,22,27,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bone); color:var(--ink); font-family:'Archivo',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Archivo Black',sans-serif; margin:0; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  .nav{position:sticky; top:0; z-index:40; background:var(--bone); border-bottom:1px solid var(--line-dark);}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; height:72px; position:relative;}
+  .logo{font-family:'Archivo Black'; font-size:1.25rem; letter-spacing:0.02em; text-decoration:none;}
+  .logo span{color:var(--orange);}
+  .nav-right{display:flex; align-items:center; gap:18px;}
+  .nav-links{display:flex; gap:28px; list-style:none; margin:0; padding:0; align-items:center;}
+  .nav-links a{text-decoration:none; font-size:0.92rem; font-weight:500; position:relative; padding-bottom:4px; display:flex; align-items:center; gap:6px;}
+  .nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--orange); transition:width .2s ease;}
+  .nav-links a:hover::after{width:100%;}
+  .nav-links a.active{color:var(--orange);}
+  .nav-links a.active::after{width:100%;}
+  .cart-btn{display:flex; align-items:center; gap:8px; background:var(--ink); color:var(--bone); border:none; padding:10px 16px; font-size:0.88rem; font-weight:600; text-decoration:none;}
+  .mobile-bottom-nav{display:none;}
+  @media(max-width:760px){
+    body{padding-bottom:72px;}
+    .nav{position:sticky; top:0;}
+    .nav-inner{height:72px; flex-wrap:nowrap; gap:8px;}
+    .nav-right{width:auto; justify-content:flex-end; gap:10px;}
+    .nav-links{display:none;}
+    .mobile-bottom-nav{position:fixed; right:0; bottom:0; left:0; z-index:40; display:grid; grid-template-columns:repeat(4,1fr); background:var(--bone); border-top:1px solid var(--line-dark); box-shadow:0 -6px 18px rgba(21,22,27,0.08);}
+    .mobile-bottom-nav a{display:flex; min-height:68px; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:var(--ink); text-decoration:none; font-size:0.7rem; font-weight:600;}
+    .mobile-bottom-nav a i{color:var(--orange); font-size:1rem;}
+    .mobile-bottom-nav a.active{color:var(--orange);}
+  }
+
+  .page-head{background:var(--ink); color:var(--bone); padding:70px 0 50px; text-align:center;}
+  .page-head .eyebrow{color:var(--orange); font-weight:600; font-size:0.85rem; margin-bottom:14px;}
+  .page-head h1{font-size:clamp(2.2rem,6vw,4rem); text-transform:uppercase;}
+
+  .about{padding:80px 0;}
+  .about-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:start;}
+  @media(max-width:800px){ .about-grid{grid-template-columns:1fr;} }
+  .about h2{font-size:clamp(1.7rem,3.6vw,2.4rem); margin-bottom:20px;}
+  .about p{color:#3a3a40; line-height:1.75; font-size:1.02rem; max-width:56ch;}
+  .about p + p{margin-top:16px;}
+
+  .stats{display:grid; grid-template-columns:1fr 1fr; gap:28px; border-top:1px solid var(--line-dark); padding-top:28px; margin-top:8px;}
+  @media(max-width:420px){ .stats{grid-template-columns:1fr;} }
+  .stat-num{font-family:'Archivo Black'; font-size:2.2rem; color:var(--orange);}
+  .stat-label{font-size:0.82rem; color:var(--steel); margin-top:4px;}
+
+  .timeline{padding:0 0 80px;}
+  .timeline .wrap > h2{font-size:clamp(1.7rem,3.6vw,2.4rem); margin-bottom:30px;}
+  .drop-row{display:flex; gap:22px; padding:22px 0; border-top:1px solid var(--line-dark); align-items:baseline; flex-wrap:wrap;}
+  .drop-row:last-child{border-bottom:1px solid var(--line-dark);}
+  .drop-num{font-family:'Archivo Black'; font-size:1.4rem; color:var(--steel); min-width:70px;}
+  .drop-name{font-weight:600; font-size:1.05rem; flex:1; min-width:180px;}
+  .drop-date{color:var(--steel); font-size:0.9rem;}
+
+  footer{padding:56px 0 34px; background:var(--bone-dim);}
+  .foot-grid{display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:36px;}
+  .foot-links{display:flex; gap:40px; flex-wrap:wrap;}
+  .foot-col h4{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:12px; color:var(--steel);}
+  .foot-col a{display:block; text-decoration:none; font-size:0.9rem; margin-bottom:8px;}
+  .copyright{border-top:1px solid var(--line-dark); padding-top:20px; font-size:0.8rem; color:var(--steel); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  /* ANIMATION */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+  .page-head .eyebrow, .page-head h1{opacity:0; animation:head-in .7s ease forwards;}
+  .page-head h1{animation-delay:.15s;}
+  @keyframes head-in{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  .reveal-stagger > *{opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease;}
+  .reveal-stagger.in > *{opacity:1; transform:translateY(0);}
+  .reveal-stagger.in > *:nth-child(1){transition-delay:.03s;}
+  .reveal-stagger.in > *:nth-child(2){transition-delay:.1s;}
+  .reveal-stagger.in > *:nth-child(3){transition-delay:.17s;}
+  .reveal-stagger.in > *:nth-child(4){transition-delay:.24s;}
+
+  .drop-row{transition:background-color .2s ease;}
+  .drop-row:hover{background-color:rgba(21,22,27,0.03);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index_2.html" class="logo">SILVA<span>·</span>DRIP</a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i>Shop</a></li>
+        <li><a href="about_1.html" class="active" aria-current="page"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>About</a></li>
+        <li><a href="contact_1.html"><i class="fa-solid fa-envelope" aria-hidden="true"></i>Contact</a></li>
+        <li><a href="login_2.html"><i class="fa-solid fa-user" aria-hidden="true"></i>Account</a></li>
+      </ul>
+      <a href="index_2.html#shop" class="cart-btn">Shop</a>
+    </div>
+  </div>
+</nav>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i><span>Shop</span></a>
+  <a href="about_1.html" class="active" aria-current="page"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>About</span></a>
+  <a href="contact_1.html"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Contact</span></a>
+  <a href="login_2.html"><i class="fa-solid fa-user" aria-hidden="true"></i><span>Account</span></a>
+</nav>
+
+<div class="page-head">
+  <div class="wrap">
+        <img src="silva logo.png" alt="" style="width: 130px; height: 150px; margin-bottom: 2px; ">
+    <div class="eyebrow">Since 2023</div>
+    <h1>About Silva Drip</h1>
+  </div>
+</div>
+
+<section class="about">
+  <div class="wrap about-grid">
+    <div class="reveal">
+      <h2>Made for the block, not the boardroom.</h2>
+      <p>Silva Drip started in a garage with one screen printer and a stack of blank hoodies. We still print everything in-house, in runs small enough that nothing sits in a warehouse. If a piece sells out, we move on to the next one instead of reprinting it.</p>
+      <p>No seasons, no lookbooks shot in a studio. Just drops, whenever the next idea is ready — designed on the block it's worn on, not in a boardroom.</p>
+      <p>Every graphic starts as a hand-drawn stamp before it ever touches fabric. That's why nothing in the store looks like it came off a template — because it didn't.</p>
+    </div>
+    <div class="stats reveal-stagger" id="statsBlock">
+      <div><div class="stat-num" data-target="4" data-suffix="">00</div><div class="stat-label">Drops released</div></div>
+      <div><div class="stat-num" data-target="1200" data-suffix="" data-format="k">0</div><div class="stat-label">Pieces per run</div></div>
+      <div><div class="stat-num" data-target="0" data-suffix="">0</div><div class="stat-label">Restocks, ever</div></div>
+      <div><div class="stat-num" data-target="100" data-suffix="%">0%</div><div class="stat-label">Printed in-house</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="timeline">
+
+  <div class="wrap">
+    <h2 class="reveal">The drops so far</h2>
+    <div class="reveal-stagger" id="timelineBlock">
+      <div class="drop-row"><span class="drop-num">001</span><span class="drop-name">Concrete Season</span><span class="drop-date">Spring 2023</span></div>
+      <div class="drop-row"><span class="drop-num">002</span><span class="drop-name">Static &amp; Steel</span><span class="drop-date">Fall 2023</span></div>
+      <div class="drop-row"><span class="drop-num">003</span><span class="drop-name">Curb Weight</span><span class="drop-date">Spring 2024</span></div>
+      <div class="drop-row"><span class="drop-num">004</span><span class="drop-name">Blackout</span><span class="drop-date">Out now</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4 style="font-family:'Archivo Black'; font-size:1.1rem; margin-bottom:8px;">SILVA·DRIP</h4>
+        <p style="color:var(--steel); font-size:0.9rem; max-width:32ch;">Small-batch streetwear, printed in-house, dropped whenever it's ready.</p>
+      </div>
+      <div class="foot-links">
+        <div class="foot-col">
+          <h4>Shop</h4>
+          <a href="index.html#shop">Hoodies</a>
+          <a href="index.html#shop">Tees</a>
+          <a href="index.html#shop">Bottoms</a>
+        </div>
+        <div class="foot-col">
+          <h4>Brand</h4>
+          <a href="about_1.html">About</a>
+          <a href="contact_1.html">Contact</a>
+        </div>
+        <div class="foot-col">
+          <h4>Follow</h4>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <span>© 2026 Silva Drip. All rights reserved.</span>
+      <span>Demo store — not a live checkout.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function animateCount(el){
+    const target = Number(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const isK = el.dataset.format === 'k';
+    const duration = 1100;
+    const start = performance.now();
+    function frame(now){
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(target * eased);
+      el.textContent = isK ? (value/1000).toFixed(1).replace(/\.0$/,'') + 'K' : value + suffix;
+      if(progress < 1) requestAnimationFrame(frame);
+      else el.textContent = isK ? (target/1000).toFixed(1).replace(/\.0$/,'') + 'K' : target + suffix;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  const revealObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        if(entry.target.id === 'statsBlock'){
+          entry.target.querySelectorAll('.stat-num').forEach(animateCount);
+        }
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.2});
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => revealObserver.observe(el));
+</script>
+
+</body>
+</html>
