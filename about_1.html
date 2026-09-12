@@ -96,13 +96,32 @@
 
   .drop-row{transition:background-color .2s ease;}
   .drop-row:hover{background-color:rgba(21,22,27,0.03);}
+  ::selection{background:var(--orange);color:var(--ink);}
+  :focus-visible{outline:3px solid var(--orange);outline-offset:3px;}
+  .announcement{background:var(--ink);color:var(--bone);text-align:center;padding:8px 16px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .nav{background:rgba(237,232,221,.92);backdrop-filter:blur(14px);}
+  .logo{display:flex;align-items:center;gap:3px;}
+  .logo-mark{width:28px;height:28px;object-fit:contain;margin-right:5px;}
+  .page-head{position:relative;overflow:hidden;padding:82px 0 64px;text-align:left;}
+  .page-head::after{content:'004';position:absolute;right:7%;bottom:-42px;color:rgba(237,232,221,.08);font-family:'Archivo Black';font-size:13rem;line-height:1;pointer-events:none;}
+  .page-head .wrap{position:relative;z-index:1;}
+    .page-head-logo{width:104px;height:104px;object-fit:contain;margin:0 0 24px;filter:drop-shadow(10px 12px 0 #FF5A1F);}
+  .about{padding:92px 0;}
+  .about-grid{gap:80px;}
+  .about-grid > div:first-child{border-left:4px solid var(--orange);padding-left:28px;}
+  .stats{gap:34px;padding:30px 0 0;}
+  .stat-num{font-size:2.6rem;}
+  .timeline{padding-bottom:96px;}
+  .drop-row{padding:26px 18px;}
+  @media(max-width:760px){.announcement{font-size:.62rem;padding:7px 10px}.page-head{padding:56px 0 48px}.page-head::after{font-size:7rem;bottom:-8px}.page-head-logo{width:82px;height:82px}.about{padding:64px 0}.about-grid{gap:42px}.about-grid > div:first-child{padding-left:18px}.drop-row{padding:22px 0}}
 </style>
 </head>
 <body>
+<div class="announcement">Free shipping over ₦150,000 · Drop 004 is live</div>
 
 <nav class="nav">
   <div class="wrap nav-inner">
-    <a href="index_2.html" class="logo">SILVA<span>·</span>DRIP</a>
+    <a href="index_2.html" class="logo"><img class="logo-mark" src="silva logo.png" alt="">SILVA<span>·</span>DRIP</a>
     <div class="nav-right">
       <ul class="nav-links">
         <li><a href="index_2.html"><i class="fa-solid fa-shop" aria-hidden="true"></i>Shop</a></li>
@@ -124,7 +143,7 @@
 
 <div class="page-head">
   <div class="wrap">
-        <img src="silva logo.png" alt="" style="width: 130px; height: 150px; margin-bottom: 2px; ">
+    <img class="page-head-logo" src="silva logo.png" alt="Silva Drip logo">
     <div class="eyebrow">Since 2023</div>
     <h1>About Silva Drip</h1>
   </div>
@@ -170,9 +189,9 @@
       <div class="foot-links">
         <div class="foot-col">
           <h4>Shop</h4>
-          <a href="index.html#shop">Hoodies</a>
-          <a href="index.html#shop">Tees</a>
-          <a href="index.html#shop">Bottoms</a>
+          <a href="index_2.html#shop">Hoodies</a>
+          <a href="index_2.html#shop">Tees</a>
+          <a href="index_2.html#shop">Bottoms</a>
         </div>
         <div class="foot-col">
           <h4>Brand</h4>
