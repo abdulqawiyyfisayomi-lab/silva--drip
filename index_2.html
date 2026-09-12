@@ -130,7 +130,11 @@
   .drawer-item-info .nm{font-weight:600; font-size:0.92rem;}
   .drawer-item-info .cat{font-size:0.72rem; color:var(--steel); margin:2px 0 8px;}
   .qty-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
-  .qty-row button{width:24px; height:24px; border:1px solid var(--ink); background:none; font-weight:700;}
+  .qty-row > span{min-width:20px; text-align:center; font-weight:700;}
+  .qty-row .qty-btn{width:30px; height:30px; border:1px solid var(--orange); background:var(--orange); color:var(--ink); display:inline-flex; align-items:center; justify-content:center; font-size:1rem; font-weight:700; line-height:1; transition:background-color .15s ease, color .15s ease, transform .15s ease;}
+  .qty-row .qty-btn:hover{background:var(--ink); border-color:var(--ink); color:var(--orange);}
+  .qty-row .qty-btn:focus-visible{outline:2px solid var(--orange); outline-offset:2px;}
+  .qty-row .qty-btn:active{transform:scale(0.9);}
   .qty-row button.remove-link{width:auto; height:auto; background:var(--orange); border:1px solid var(--orange); color:var(--ink); font-size:0.72rem; font-weight:700; padding:6px 10px; margin-left:auto;}
   .qty-row button.remove-link:hover{background:var(--ink); border-color:var(--ink); color:var(--bone);}
   .drawer-foot{padding:22px 24px; border-top:1px solid var(--line-dark);}
@@ -267,8 +271,8 @@
         </div>
         <div class="foot-col">
           <h4>Follow</h4>
-          <a href="#">Instagram</a>
-          <a href="#">TikTok</a>
+          <a href="https://www.instagram.com/sil.vadrip?igsh=MTltdTQ2djV5ZnZqYw%3D%3D&utm_source=qr">Instagram</a>
+          <a href="https://vt.tiktok.com/ZSQnn4XLs/">TikTok</a>
         </div>
       </div>
     </div>
@@ -308,7 +312,7 @@
   };
 
   const PRODUCTS = [
-    {id:1, name:"Raime Hoodie", cat:"Hoodies", price:128, image:"clothes image/Screenshot (23).png"},
+    {id:1, name:"Raime cap", cat:"Hoodies", price:128, image:"clothes image/Screenshot (23).png"},
     {id:2, name:"Raime Tee", cat:"Tees", price:58, image:"clothes image/Screenshot (24).png"},
     {id:3, name:"Raime Cargo", cat:"Bottoms", price:148, image:"clothes image/Screenshot (26).png"},
     {id:4, name:"Raime Cap", cat:"Accessories", price:46, image:"clothes image/Screenshot (27).png"},
@@ -446,9 +450,9 @@
             <div class="nm">${p.name}</div>
             <div class="cat">${fmt(p.price)}</div>
             <div class="qty-row">
-              <button data-action="dec" data-id="${p.id}">-</button>
+              <button class="qty-btn qty-minus" type="button" data-action="dec" data-id="${p.id}" aria-label="Decrease ${p.name} quantity" title="Decrease quantity"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
               <span>${cart[id]}</span>
-              <button data-action="inc" data-id="${p.id}">+</button>
+              <button class="qty-btn qty-plus" type="button" data-action="inc" data-id="${p.id}" aria-label="Increase ${p.name} quantity" title="Increase quantity"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
               <button class="remove-link" data-action="rm" data-id="${p.id}">Remove</button>
             </div>
           </div>
