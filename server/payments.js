@@ -1,48 +1,11 @@
-import {readFileSync} from 'node:fs';
-export const catalog = JSON.parse(readFileSync(new URL('./catalog.json', import.meta.url)));
-export function orderItems(items) {
-  if(!Array.isArray(items) || !items.length || items.length>34) throw new Error('Choose between 1 and 34 products.');
-  const seen = new Set();
-  return items.map(item=>{
-    const p = catalog.find(p=>p.id===item.id);
-    if(!p || seen.has(item.id) || !Number.isInteger(item.quantity) || item.quantity<1 || item.quantity>20) throw new Error('Invalid cart. Return to the shop and try again.');
-    const sizes=p.cat==='Accessories'?['One size']:['S','M','L','XL','XXL'];
-    if(!sizes.includes(item.size)) throw new Error('Choose a valid size for each item.');
-    seen.add(item.id);
-    return {id:p.id,name:p.name,size:item.size,quantity:item.quantity,unit_amount:p.price};
-  });
-}
-export function total(items) {return items.reduce((sum,i)=>sum+i.quantity*i.unit_amount,0);}
-export function settings() {
-  const {SUPABASE_SERVICE_ROLE_KEY, PAYSTACK_SECRET_KEY, SITE_URL} = process.env;
-  if(!SUPABASE_SERVICE_ROLE_KEY || !PAYSTACK_SECRET_KEY || !SITE_URL) throw new Error('Checkout is not configured yet. Please contact the store.');
-  return {key:SUPABASE_SERVICE_ROLE_KEY, payKey:PAYSTACK_SECRET_KEY, site:new URL(SITE_URL).origin, url:'https://zypnnutljumdewfblmuc.supabase.co'};
-}
-export async function database(path, options={}) {
-  const s=settings();
-  const r=await fetch(s.url+'/rest/v1/'+path,{...options,headers:{apikey:s.key,Authorization:'Bearer '+s.key,'Content-Type':'application/json',Prefer:'return=representation',...options.headers}});
-  if(!r.ok) throw new Error('Unable to save or retrieve your order. Please try again.');
-  return r.status===204 ? null : r.json();
-}
-export async function user(req) {
-  const s=settings(); const token=req.headers.authorization;
-  if(!token?.startsWith('Bearer ')) throw new Error('Please sign in to continue.');
-  const r=await fetch(s.url+'/auth/v1/user',{headers:{apikey:s.key,Authorization:token}});
-  if(!r.ok) throw new Error('Please sign in again.');
-  return r.json();
-}
-export async function paystack(path, body) {
-  const r=await fetch('https://api.paystack.co/'+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+settings().payKey,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
-  const j=await r.json();
-  if(!r.ok || !j.status) throw new Error('Payment service unavailable. Please try again.');
-  return j.data;
-}
-export function matchesPayment(order, payment) {
-  return payment.status==='success' && payment.reference===order.reference && payment.amount===order.amount && payment.currency==='NGN' && payment.customer?.email?.toLowerCase()===order.email.toLowerCase();
-}
-export async function settle(order) {
-  const payment=await paystack('transaction/verify/'+encodeURIComponent(order.reference));
-  if(!matchesPayment(order,payment)) return {paid:false,reference:order.reference};
-  await database('orders?reference=eq.'+encodeURIComponent(order.reference),{method:'PATCH',body:JSON.stringify({status:'paid',paid_at:payment.paid_at || new Date().toISOString()})});
-  return {paid:true,reference:order.reference};
-}
+export function settings(){const {SUPABASE_SERVICE_ROLE_KEY:key,PAYSTACK_SECRET_KEY:payKey,SITE_URL:site}=process.env;if(!key||!site)throw Error('Store settings are incomplete. Please contact the store.');return {key,payKey,site:new URL(site).origin,url:'https://zypnnutljumdewfblmuc.supabase.co'};}
+export async function database(path,options={}){const s=settings();const r=await fetch(s.url+'/rest/v1/'+path,{...options,headers:{apikey:s.key,Authorization:'Bearer '+s.key,'Content-Type':'application/json',Prefer:'return=representation',...options.headers}});if(!r.ok){const detail=await r.json().catch(()=>({}));console.error('Database request failed',r.status,detail.code);throw Error(detail.code==='P0001'?detail.message:'Unable to access store data. Please check the store setup.');}if(r.status===204)return null;const text=await r.text();return text?JSON.parse(text):null;}
+export async function user(req){const s=settings(),token=req.headers.authorization;if(!token?.startsWith('Bearer '))throw Error('Please sign in to continue.');const r=await fetch(s.url+'/auth/v1/user',{headers:{apikey:s.key,Authorization:token}});if(!r.ok)throw Error('Please sign in again.');return r.json();}
+export async function admin(req){const u=await user(req);if(u.app_metadata?.store_admin!==true)throw Error('Administrator access required.');return u;}
+export async function paystack(path,body){if(!settings().payKey)throw Error('Payment service is not configured.');const r=await fetch('https://api.paystack.co/'+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+settings().payKey,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});const j=await r.json();if(!r.ok||!j.status)throw Error('Payment service unavailable. Please try again.');return j.data;}
+export function matchesPayment(o,p){return p.status==='success'&&p.reference===o.reference&&p.amount===o.amount&&p.currency==='NGN'&&p.customer?.email?.toLowerCase()===o.email.toLowerCase();}
+export async function sendConfirmation(order){if(!process.env.RESEND_API_KEY||!process.env.ORDER_EMAIL_FROM)return false;if(order.confirmation_sent_at)return true;const text=['Thank you for shopping Silva Drip.','Payment confirmed.','Order: '+order.reference,...order.items.map(i=>`${i.name} / ${i.size} / ${i.color||'As pictured'} × ${i.quantity}`),'Total: NGN '+(order.amount/100).toLocaleString(),'Track your order: '+settings().site+'/orders.html'].join('\n');const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json','Idempotency-Key':'confirmation-'+order.reference},body:JSON.stringify({from:process.env.ORDER_EMAIL_FROM,to:[order.email],subject:'Silva Drip order confirmed — '+order.reference,text})});if(!r.ok){console.error('Order email could not send',r.status);return false;}await database('orders?reference=eq.'+encodeURIComponent(order.reference),{method:'PATCH',body:JSON.stringify({confirmation_sent_at:new Date().toISOString()})});return true;}
+export async function settle(order){const payment=await paystack('transaction/verify/'+encodeURIComponent(order.reference));if(!matchesPayment(order,payment))return {paid:false,reference:order.reference};if(order.fulfillment_status==='cancelled')throw Error('Payment needs store attention. Contact support with your reference.');await database('rpc/confirm_store_order',{method:'POST',body:JSON.stringify({p_reference:order.reference,p_paid_at:payment.paid_at||new Date().toISOString()})});let emailSent=false;try{emailSent=await sendConfirmation(order);}catch{console.error('Confirmation email retry required');}return {paid:true,reference:order.reference,emailSent};}
+export function body(req){return typeof req.body==='string'?JSON.parse(req.body):req.body;}
+export function safeImage(value){return typeof value==='string'&&value.length<2000&&(/^(clothes image\/|image\/)/.test(value)||/^https:\/\//.test(value));}
+export function validProduct(p,variants){if(!p||typeof p.name!=='string'||!p.name.trim()||p.name.length>120||typeof p.cat!=='string'||p.cat.length>60||!Number.isSafeInteger(p.price)||p.price<100||!safeImage(p.image)||typeof p.description!=='string'||p.description.length>5000||typeof p.size_guide!=='string'||p.size_guide.length>4000||!Array.isArray(p.gallery)||p.gallery.length>8||!p.gallery.every(safeImage)||typeof p.active!=='boolean')throw Error('Check the product details.');if(!Array.isArray(variants)||!variants.length||variants.length>100)throw Error('Add between 1 and 100 variants.');const seen=new Set();for(const v of variants){if(typeof v.size!=='string'||!v.size.trim()||v.size.length>40||typeof v.color!=='string'||!v.color.trim()||v.color.length>50||!Number.isInteger(v.stock)||v.stock<0||v.stock>100000)throw Error('Check variant sizes, colours and stock.');const key=v.size+'|'+v.color;if(seen.has(key))throw Error('Duplicate size and colour.');seen.add(key);}return true;}

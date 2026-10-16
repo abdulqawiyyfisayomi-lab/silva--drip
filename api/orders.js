@@ -1,0 +1,2 @@
+import {user,database} from '../server/payments.js';
+export default async function handler(req,res){res.setHeader('Cache-Control','no-store');if(req.method!=='GET')return res.status(405).json({error:'Method not allowed'});try{const u=await user(req);return res.json(await database('orders?user_id=eq.'+encodeURIComponent(u.id)+'&order=created_at.desc&limit=100'));}catch(e){return res.status(400).json({error:e.message});}}

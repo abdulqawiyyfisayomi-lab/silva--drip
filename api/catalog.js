@@ -1,0 +1,2 @@
+import {database} from '../server/payments.js';
+export default async function handler(req,res){if(req.method!=='GET')return res.status(405).json({error:'Method not allowed'});try{const products=await database('products?active=eq.true&select=*,variants(*)&order=id.asc');const settings=await database('store_settings?id=eq.1&select=data');return res.json({products,settings:settings[0]?.data||{zones:[]}});}catch(e){return res.status(503).json({error:e.message});}}

@@ -1,20 +1,3 @@
 import {randomUUID} from 'node:crypto';
-import {settings,user,orderItems,total,database,paystack} from '../server/payments.js';
-export default async function handler(req,res) {
-  if(req.method!=='POST') return res.status(405).json({error:'Method not allowed'});
-  try {
-    const account=await user(req);
-    const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
-    const items=orderItems(body.items);
-    const shipping={};
-    for(const field of ['name','phone','address','city','state']) {
-      const value=body.shipping?.[field];
-      if(typeof value!=='string' || !value.trim() || value.length>(field==='address'?1000:120)) throw new Error('Please complete your delivery details.');
-      shipping[field]=value.trim();
-    }
-    const reference='silva-'+randomUUID(), amount=total(items);
-    await database('orders',{method:'POST',body:JSON.stringify({reference,user_id:account.id,email:account.email,amount,items,shipping,status:'pending'})});
-    const payment=await paystack('transaction/initialize',{reference,amount,email:account.email,currency:'NGN',callback_url:settings().site+'/checkout.html',metadata:{order_reference:reference}});
-    return res.json({url:payment.authorization_url,reference});
-  } catch(error) {return res.status(400).json({error:error.message});}
-}
+import {settings,user,body,database,paystack} from '../server/payments.js';
+export default async function handler(req,res){if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});let reference;try{const account=await user(req),b=body(req),shipping={};for(const f of ['name','phone','address','city']){if(typeof b.shipping?.[f]!=='string'||!b.shipping[f].trim()||b.shipping[f].length>(f==='address'?1000:120))throw Error('Complete your delivery details.');shipping[f]=b.shipping[f].trim();}if(typeof b.zone!=='string'||b.zone.length>80)throw Error('Select a delivery zone.');if(!Array.isArray(b.items)||b.items.length>50||!b.items.length||b.items.some(i=>!Number.isSafeInteger(i.variant_id)||!Number.isInteger(i.quantity)||i.quantity<1||i.quantity>20))throw Error('Check your bag quantities.');if(!settings().payKey)throw Error('Payment service is not configured.');reference='silva-'+randomUUID();const o=await database('rpc/reserve_store_order',{method:'POST',body:JSON.stringify({p_reference:reference,p_user:account.id,p_email:account.email,p_items:b.items,p_shipping:shipping,p_zone:b.zone})});const payment=await paystack('transaction/initialize',{reference,amount:o.amount,email:account.email,currency:'NGN',callback_url:settings().site+'/checkout.html',metadata:{order_reference:reference}});return res.json({url:payment.authorization_url,reference});}catch(e){/* A provider timeout may have created a transaction. Keep its reservation until verified by an admin. */return res.status(400).json({error:e.message,reference});}}
