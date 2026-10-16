@@ -172,7 +172,7 @@
       </ul>
       <a href="index_2.html#shop" class="cart-btn">Shop</a>
     </div>
-  </div>
+  </div>q
 </nav>
 
 <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
@@ -267,10 +267,12 @@
 
 <footer>
   <div class="wrap">
-    <div class="copyright">© 2026 Silva Drip. Demo account system — no real data is stored or transmitted.</div>
+    <div class="copyright">© 2026 Silva Drip. Secure account access — no real data is stored or transmitted.</div>
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
 <script>
   const loaderScreen = document.getElementById('loaderScreen');
   window.addEventListener('load', ()=>{
@@ -278,11 +280,6 @@
       loaderScreen.classList.add('hidden');
     }, 1400);
   });
-
-  // In-memory "database" of accounts for this session only.
-  // A real site would replace this with actual backend authentication.
-  const users = JSON.parse(localStorage.getItem('silvaDripUsers') || '[]');
-  let currentUser = JSON.parse(localStorage.getItem('silvaDripAuth') || 'null');
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -331,7 +328,7 @@
   });
 
   // Signup
-  signupForm.addEventListener('submit', (e)=>{
+  signupForm.addEventListener('submit', async (e)=>{
     e.preventDefault();
     clearErrors(['signupNameErr','signupEmailErr','signupPasswordErr','signupConfirmErr']);
     clearInvalid(['signupName','signupEmail','signupPassword','signupConfirm']);
@@ -345,22 +342,29 @@
 
     if(!name){ setError('signupNameErr', 'Enter your name.'); markInvalid('signupName'); hasError = true; }
     if(!EMAIL_RE.test(email)){ setError('signupEmailErr', 'Enter a valid email address.'); markInvalid('signupEmail'); hasError = true; }
-    else if(users.some(u => u.email === email)){ setError('signupEmailErr', 'An account with this email already exists.'); markInvalid('signupEmail'); hasError = true; }
+
     if(password.length < 8){ setError('signupPasswordErr', 'Password must be at least 8 characters.'); markInvalid('signupPassword'); hasError = true; }
     if(confirm !== password || !confirm){ setError('signupConfirmErr', 'Passwords do not match.'); markInvalid('signupConfirm'); hasError = true; }
 
     if(hasError) return;
 
-    users.push({ name, email, password });
-    localStorage.setItem('silvaDripUsers', JSON.stringify(users));
-    document.getElementById('signupNote').className = 'form-note success';
-    document.getElementById('signupNote').textContent = 'Account created. Sign in below.';
-    signupForm.reset();
-    setTimeout(()=> switchToLogin(email), 700);
+    const button = signupForm.querySelector('[type="submit"]');
+    button.disabled = true;
+    try {
+      const {data, error} = await silvaAuth.auth.signUp({email, password,
+        options: {data: {name}, emailRedirectTo: new URL('login_2.html', location.href).href}});
+      if(error) throw error;
+      document.getElementById('signupNote').className = 'form-note success';
+      document.getElementById('signupNote').textContent = data.session ? 'Account created. You are signed in.' : 'Check your email to confirm your account, then sign in.';
+      signupForm.reset();
+      if(data.session) showAccount(data.user);
+    } catch(error) {
+      document.getElementById('signupNote').textContent = error.message || 'Could not create your account. Try again.';
+    } finally {button.disabled = false;}
   });
 
   // Login
-  loginForm.addEventListener('submit', (e)=>{
+  loginForm.addEventListener('submit', async (e)=>{
     e.preventDefault();
     clearErrors(['loginEmailErr','loginPasswordErr']);
     clearInvalid(['loginEmail','loginPassword']);
@@ -374,44 +378,38 @@
     if(!password){ setError('loginPasswordErr', 'Enter your password.'); markInvalid('loginPassword'); hasError = true; }
     if(hasError) return;
 
-    const user = users.find(u => u.email === email);
-    if(!user){
+    const button = loginForm.querySelector('[type="submit"]');
+    button.disabled = true;
+    try {
+      const {data, error} = await silvaAuth.auth.signInWithPassword({email, password});
+      if(error) throw error;
+      loginForm.reset();
+      showAccount(data.user);
+      const returnTo = new URLSearchParams(location.search).get('return');
+      if(returnTo) {
+        const target = new URL(returnTo, location.href);
+        if(target.origin === location.origin && ['http:', 'https:'].includes(target.protocol)) location.replace(target.href);
+      }
+    } catch(error) {
       document.getElementById('loginNote').className = 'form-note error';
-      document.getElementById('loginNote').textContent = "No account found with that email — create one instead.";
-      markInvalid('loginEmail');
-      return;
-    }
-    if(user.password !== password){
-      setError('loginPasswordErr', 'Incorrect password.');
-      markInvalid('loginPassword');
-      return;
-    }
-
-    currentUser = user;
-    localStorage.setItem('silvaDripAuth', JSON.stringify({name: user.name, email: user.email}));
-    showAccount(user);
-    const returnTo = new URLSearchParams(location.search).get('return');
-    if(returnTo) setTimeout(()=> location.replace(returnTo), 500);
-  });
-
-  document.getElementById('forgotBtn').addEventListener('click', ()=>{
-    document.getElementById('loginNote').className = 'form-note';
-    document.getElementById('loginNote').textContent = "Password reset isn't wired up in this demo — connect a real auth provider for that.";
+      document.getElementById('loginNote').textContent = error.message || 'Unable to sign in. Try again.';
+    } finally {button.disabled = false;}
   });
 
   function showAccount(user){
+    const name = user.user_metadata?.name || user.email.split('@')[0];
     document.getElementById('tabs').style.display = 'none';
     document.getElementById('authBody').style.display = 'none';
     const view = document.getElementById('accountView');
     view.classList.add('show');
-    document.getElementById('avatarInitial').textContent = user.name.trim()[0].toUpperCase();
-    document.getElementById('welcomeName').textContent = `Welcome back, ${user.name.split(' ')[0]}`;
+    document.getElementById('avatarInitial').textContent = (name.trim()[0] || 'S').toUpperCase();
+    document.getElementById('welcomeName').textContent = `Welcome back, ${name.split(' ')[0]}`;
     document.getElementById('welcomeEmail').textContent = user.email;
   }
 
-  document.getElementById('logoutBtn').addEventListener('click', ()=>{
-    currentUser = null;
-    localStorage.removeItem('silvaDripAuth');
+  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+    const {error} = await silvaAuth.auth.signOut();
+    if(error) {alert(error.message); return;}
     document.getElementById('accountView').classList.remove('show');
     document.getElementById('tabs').style.display = 'flex';
     document.getElementById('authBody').style.display = 'block';
@@ -419,7 +417,10 @@
     document.getElementById('loginNote').textContent = '';
   });
 
-  if(currentUser) showAccount(currentUser);
+  silvaAuth.auth.getUser().then(({data})=>{if(data.user) showAccount(data.user);});
+  silvaAuth.auth.onAuthStateChange((event, session)=>{
+    if(session) showAccount(session.user);
+  });
 
   // Mobile nav
 </script>

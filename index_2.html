@@ -151,6 +151,12 @@
   .qty-row button.remove-link:hover{background:var(--ink); border-color:var(--ink); color:var(--bone);}
   .drawer-foot{padding:22px 24px; border-top:1px solid var(--line-dark);}
   .subtotal-row{display:flex; justify-content:space-between; font-weight:700; margin-bottom:14px; font-size:1.05rem;}
+  .payment-methods{margin:16px 0;}
+  .payment-methods-label{display:block; color:var(--steel); font-size:.72rem; font-weight:700; letter-spacing:.07em; margin-bottom:8px; text-transform:uppercase;}
+  .payment-method{display:flex; align-items:center; gap:9px; border:1px solid var(--line-dark); padding:10px 12px; font-size:.82rem; cursor:pointer;}
+  .payment-method + .payment-method{border-top:0;}
+  .payment-method input{accent-color:var(--orange);}
+  .payment-method-note{margin:8px 0 0; color:var(--steel); font-size:.72rem; line-height:1.4;}
   .checkout-btn{width:100%; background:var(--ink); color:var(--bone); border:none; padding:15px; font-weight:700; font-size:0.95rem;}
   .empty-cart{color:var(--steel); font-size:0.9rem; padding:30px 0; text-align:center;}
 
@@ -362,13 +368,19 @@
   <div class="drawer-items" id="drawerItems"></div>
   <div class="drawer-foot">
     <div class="subtotal-row"><span>Subtotal</span><span id="subtotal">₦0</span></div>
-    <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+    <fieldset class="payment-methods">
+      <legend class="payment-methods-label">Checkout payment method</legend>
+      <label class="payment-method"><input type="radio" name="paymentMethod" value="card" checked> Card</label>
+      <label class="payment-method"><input type="radio" name="paymentMethod" value="bank_transfer"> Bank transfer</label>
+      <label class="payment-method"><input type="radio" name="paymentMethod" value="ussd"> USSD</label>
+      <p class="payment-method-note">Card number, expiry date, and CVC are entered securely in Paystack.</p>
+    </fieldset>
+    <button class="checkout-btn" id="checkoutBtn">Continue to secure checkout</button>
   </div>
 </aside>
 
-<script src="https://js.paystack.co/v2/inline.js"></script>
+
 <script>
-  const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PUBLIC_KEY";
   const PAYSTACK_CURRENCY = "NGN";
   const NAIRA_MULTIPLIER = 1000;
 
@@ -424,7 +436,10 @@
   let activeCat = "All";
   let searchTerm = "";
   let sortMode = "featured";
-  let cart = {};
+  let cart;
+  try {cart = JSON.parse(localStorage.getItem('silvaCart') || '{}');} catch {cart = {};}
+  if(!cart || Array.isArray(cart) || typeof cart !== 'object') cart = {};
+  for(const id of Object.keys(cart)) if(!PRODUCTS.some(p=>p.id === Number(id)) || !Number.isInteger(cart[id]) || cart[id]<1 || cart[id]>20) delete cart[id];
   let ratings = JSON.parse(localStorage.getItem('raimeRatings') || '{}');
 
   function fmt(n){ return "₦" + (n * NAIRA_MULTIPLIER).toLocaleString(); }
@@ -485,7 +500,7 @@
     grid.querySelectorAll('.add-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const id = Number(btn.dataset.id);
-        cart[id] = (cart[id]||0) + 1;
+        cart[id] = Math.min(20, (cart[id]||0) + 1);
         renderCart();
         bumpCartCount();
         animateToCart(btn);
@@ -528,6 +543,8 @@
   }
 
   function renderCart(){
+    for(const id of Object.keys(cart)) if(cart[id] <= 0) delete cart[id];
+    localStorage.setItem('silvaCart', JSON.stringify(cart));
     const ids = Object.keys(cart).filter(id => cart[id] > 0);
     document.getElementById('cartCount').textContent = ids.reduce((s,id)=> s + cart[id], 0);
 
@@ -556,7 +573,7 @@
         btn.addEventListener('click', ()=>{
           const id = btn.dataset.id;
           const action = btn.dataset.action;
-          if(action==="inc") cart[id]++;
+          if(action==="inc") cart[id] = Math.min(20, cart[id]+1);
           if(action==="dec") cart[id] = Math.max(0, cart[id]-1);
           if(action==="rm") cart[id] = 0;
           renderCart();
@@ -578,44 +595,12 @@
   document.getElementById('closeCartBtn').addEventListener('click', closeDrawer);
   document.getElementById('overlay').addEventListener('click', closeDrawer);
   document.getElementById('checkoutBtn').addEventListener('click', ()=>{
-    const ids = Object.keys(cart).filter(id => cart[id] > 0);
-    if(ids.length === 0){
-      alert("Your cart is empty.");
-      return;
-    }
-    if(PAYSTACK_PUBLIC_KEY.includes('REPLACE_WITH')){
-      alert("Add your Paystack public key in index_2.html before accepting payments.");
-      return;
-    }
-    const email = window.prompt("Enter your email for the payment receipt:");
-    if(!email || !email.includes('@')) return;
-    const subtotal = ids.reduce((sum, id)=>{
-      const product = PRODUCTS.find(item => item.id === Number(id));
-      return sum + product.price * cart[id];
-    }, 0);
-    const items = ids.map(id=>{
-      const product = PRODUCTS.find(item => item.id === Number(id));
-      return `${product.name} x${cart[id]}`;
-    }).join(', ');
-    const popup = new PaystackPop();
-    popup.newTransaction({
-      key: PAYSTACK_PUBLIC_KEY,
-      email,
-      amount: Math.round(subtotal * NAIRA_MULTIPLIER * 100),
-      currency: PAYSTACK_CURRENCY,
-      metadata: {custom_fields: [{display_name: 'Cart items', variable_name: 'cart_items', value: items}]},
-      onSuccess: (transaction)=>{
-        cart = {};
-        renderCart();
-        closeDrawer();
-        alert(`Payment successful. Reference: ${transaction.reference}`);
-      },
-      onCancel: ()=> alert("Payment was cancelled.")
-    });
+    if(!Object.keys(cart).some(id=>cart[id]>0)) {alert('Your cart is empty.'); return;}
+    location.href = 'checkout.html';
   });
   document.getElementById('newsletterForm').addEventListener('submit', (e)=>{
     e.preventDefault();
-    document.getElementById('foot-note').textContent = "You're on the list — we'll email you when Drop 005 lands.";
+    document.getElementById('foot-note').textContent = "Newsletter signup is coming soon. Please contact us for drop updates.";
     e.target.reset();
   });
   document.getElementById('productSearch').addEventListener('input', (event)=>{

@@ -60,14 +60,11 @@
 <main>
   <div class="wrap" id="details"></div>
 </main>
-<script>
+<script type="module">
   const params = new URLSearchParams(window.location.search);
-  const product = {
-    name: params.get('name'),
-    category: params.get('cat'),
-    price: Number(params.get('price')),
-    image: params.get('image')
-  };
+  const catalog = await fetch('server/catalog.json').then(r=>r.json()).catch(()=>[]);
+  const found = catalog.find(p=>p.name===params.get('name') && p.image===params.get('image'));
+  const product = found ? {...found, category:found.cat,price:found.price/100000} : {};
   const details = document.getElementById('details');
   const isAccessory = product.category === 'Accessories';
   const sizes = isAccessory ? 'One size' : 'S - XXL';
@@ -86,7 +83,7 @@
         <div>
           <h1>${product.name}</h1>
           <p class="price">${price}</p>
-          <div class="spec-section"><span class="spec-label">Choose your size</span><div class="size-options">${(isAccessory ? ['One size'] : ['S','M','L','XL','XXL']).map((size,index) => `<button class="size-option${index === 1 ? ' active' : ''}" type="button">${size}</button>`).join('')}</div></div>
+          <div class="spec-section"><span class="spec-label">Choose your size</span><div class="size-options">${(isAccessory ? ['One size'] : ['S','M','L','XL','XXL']).map((size,index) => `<button class="size-option${index === (isAccessory ? 0 : 1) ? ' active' : ''}" type="button">${size}</button>`).join('')}</div></div>
           <div class="spec-section"><span class="spec-label">Available colours</span><div class="color-list">${colors.map(color => `<span class="color-chip"><span class="color-swatch" style="background:${swatches[color]}"></span>${color}</span>`).join('')}</div></div>
           <div class="delivery-note"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><span>Dispatches within 24 hours. Free shipping applies to orders over ₦150,000.</span></div>
           <a class="shop-link" href="index_2.html#shop">Continue shopping</a>
