@@ -1,0 +1,9 @@
+window.Store={
+ money:n=>'₦'+(Number(n)/100).toLocaleString('en-NG',{maximumFractionDigits:2}),
+ escape:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+ async api(path,options={}){const {data:{session}}=await silvaAuth.auth.getSession();const r=await fetch('/api/'+path,{...options,headers:{'Content-Type':'application/json',...(session?{Authorization:'Bearer '+session.access_token}:{}),...options.headers}});const j=await r.json().catch(()=>({error:'The service could not respond. Please try again.'}));if(!r.ok)throw Error(j.error||'Request failed');return j;},
+ async requireUser(){const {data:{user},error}=await silvaAuth.auth.getUser();if(error||!user){location.href='login_2.html?return='+encodeURIComponent(location.pathname+location.search);throw Error('Please sign in.');}return user;},
+ cart(){try{const c=JSON.parse(localStorage.getItem('silvaCartV2')||'[]');return Array.isArray(c)?c.filter(i=>i&&Number.isSafeInteger(i.id)&&Number.isSafeInteger(i.variant_id)&&Number.isInteger(i.quantity)&&i.quantity>=1&&i.quantity<=20):[];}catch{return[];}},
+ saveCart(c){localStorage.setItem('silvaCartV2',JSON.stringify(c));},
+ chrome(){document.querySelector('[data-header]')?.insertAdjacentHTML('afterbegin','<header class="site-nav"><a class="brand" href="index_2.html">SILVA<em>·</em>DRIP</a><nav aria-label="Main"><a href="index_2.html#shop">Shop</a><a href="orders.html">My orders</a><a href="checkout.html">Bag</a><a href="contact_1.html">Contact</a><a href="login_2.html">Account</a></nav></header>');document.querySelector('[data-footer]')?.insertAdjacentHTML('afterbegin','<footer class="site-footer"><strong>SILVA·DRIP</strong><nav><a href="policies.html#delivery">Delivery</a><a href="policies.html#returns">Returns</a><a href="policies.html#privacy">Privacy</a><a href="contact_1.html">Contact</a></nav><span>© '+new Date().getFullYear()+' Silva Drip</span></footer>');}
+};Store.chrome();

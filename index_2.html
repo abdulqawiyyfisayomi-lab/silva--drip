@@ -261,9 +261,9 @@
   }
 
 </style>
-</head>
+<link rel="stylesheet" href="responsive.css"></head>
 <body>
-<div class="announcement">Free shipping over ₦150,000 · Drop 004 is live</div>
+<div class="announcement">Delivery fees shown at checkout · Drop 004 is live</div>
 
 <nav class="nav">
   
@@ -305,8 +305,8 @@
 
 <div class="marquee">
   <div class="marquee-track">
-    <span>NEW DROP 004 OUT NOW</span><span>FREE SHIPPING OVER ₦150,000</span><span>SMALL BATCH · NO RESTOCKS</span>
-    <span>NEW DROP 004 OUT NOW</span><span>FREE SHIPPING OVER ₦150,000</span><span>SMALL BATCH · NO RESTOCKS</span>
+    <span>NEW DROP 004 OUT NOW</span><span>DELIVERY FEES AT CHECKOUT</span><span>SMALL BATCH · NO RESTOCKS</span>
+    <span>NEW DROP 004 OUT NOW</span><span>DELIVERY FEES AT CHECKOUT</span><span>SMALL BATCH · NO RESTOCKS</span>
   </div>
 </div>
 
@@ -321,7 +321,7 @@
   </div>
 </section>
 
-<section class="trust-strip" aria-label="Shopping benefits"><div class="trust-item"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><strong>Fast dispatch</strong><span>Orders leave within 24 hours</span></div><div class="trust-item"><i class="fa-solid fa-box-open" aria-hidden="true"></i><strong>Small batch pieces</strong><span>No restocks when a drop is gone</span></div><div class="trust-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><strong>Secure checkout</strong><span>Protected payments with Paystack</span></div></section>
+<section class="trust-strip" aria-label="Shopping benefits"><div class="trust-item"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><strong>Delivery information</strong><span>See delivery information</span></div><div class="trust-item"><i class="fa-solid fa-box-open" aria-hidden="true"></i><strong>Small batch pieces</strong><span>No restocks when a drop is gone</span></div><div class="trust-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><strong>Secure checkout</strong><span>Protected payments with Paystack</span></div></section>
 
 <footer>
   <div class="wrap">
@@ -359,28 +359,10 @@
   </div>
 </footer>
 
-<div class="overlay" id="overlay"></div>
-<aside class="drawer" id="drawer">
-  <div class="drawer-head">
-    <h3>Your cart</h3>
-    <button class="close-btn" id="closeCartBtn">&times;</button>
-  </div>
-  <div class="drawer-items" id="drawerItems"></div>
-  <div class="drawer-foot">
-    <div class="subtotal-row"><span>Subtotal</span><span id="subtotal">₦0</span></div>
-    <fieldset class="payment-methods">
-      <legend class="payment-methods-label">Checkout payment method</legend>
-      <label class="payment-method"><input type="radio" name="paymentMethod" value="card" checked> Card</label>
-      <label class="payment-method"><input type="radio" name="paymentMethod" value="bank_transfer"> Bank transfer</label>
-      <label class="payment-method"><input type="radio" name="paymentMethod" value="ussd"> USSD</label>
-      <p class="payment-method-note">Card number, expiry date, and CVC are entered securely in Paystack.</p>
-    </fieldset>
-    <button class="checkout-btn" id="checkoutBtn">Continue to secure checkout</button>
-  </div>
-</aside>
-
-
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="store.js"></script>
+<script type="module">
   const PAYSTACK_CURRENCY = "NGN";
   const NAIRA_MULTIPLIER = 1000;
 
@@ -393,54 +375,16 @@
     cross: `<svg viewBox="0 0 100 100" fill="#15161B"><rect x="40" y="8" width="20" height="84"/><rect x="8" y="40" width="84" height="20"/></svg>`
   };
 
-  const PRODUCTS = [
-    {id:1, name:"Silva Logo Trucker Cap", cat:"Accessories", price:128, image:"clothes image/Screenshot (23).png"},
-    {id:2, name:"Camo Silva Tracksuit", cat:"Sets", price:58, image:"clothes image/Screenshot (24).png"},
-    {id:3, name:"Silva Star Tank", cat:"Tees", price:148, image:"clothes image/Screenshot (26).png"},
-    {id:4, name:"Silva Drip Tank", cat:"Tees", price:46, image:"clothes image/Screenshot (27).png"},
-    {id:5, name:"Camo Military Cap", cat:"Accessories", price:210, image:"clothes image/Screenshot (28).png"},
-    {id:6, name:"Silva Drip Hoodie", cat:"Hoodies", price:58, image:"clothes image/Screenshot (29).png"},
-    {id:7, name:"Built Different Portrait Tee", cat:"Tees", price:138, image:"clothes image/wearing my brand.png"},
-    {id:8, name:"Silva Script Tank", cat:"Tees", price:88, image:"clothes image/Screenshot (30).png"},
-    {id:9, name:"Built Different Graphic Tee", cat:"Tees", price:62, image:"clothes image/Screenshot (31).png"},
-    {id:10, name:"Silva 88 Polo", cat:"Tees", price:142, image:"clothes image/Screenshot (32).png"},
-    {id:11, name:"Silva Script Raglan Tee", cat:"Tees", price:220, image:"clothes image/Screenshot (34).png"},
-    {id:12, name:"Silva Graffiti Trucker Cap", cat:"Accessories", price:52, image:"clothes image/Screenshot (35) - Copy.png"},
-    {id:13, name:"Silva Logo Track Pants", cat:"Bottoms", price:198, image:"clothes image/Screenshot (35).png"},
-    {id:14, name:"Silva Track Tee", cat:"Tees", price:156, image:"clothes image/Screenshot (36).png"},
-    {id:15, name:"Silva Portrait Tee", cat:"Tees", price:64, image:"clothes image/Screenshot (37).png"},
-    {id:16, name:"Silva Drip Performance Tee", cat:"Tees", price:174, image:"clothes image/Screenshot (38).png"},
-    {id:17, name:"Silva Drip Rugby Pullover", cat:"Outerwear", price:188, image:"clothes image/Screenshot (39).png"},
-    {id:18, name:"Silva Drip Denim Shorts", cat:"Bottoms", price:146, image:"clothes image/Screenshot (40).png"},
-    {id:19, name:"Silva Camo Zip Hoodie", cat:"Hoodies", price:66, image:"clothes image/Screenshot (41).png"},
-    {id:20, name:"Silva Icon Long Sleeve", cat:"Tees", price:180, image:"clothes image/Screenshot (42).png"},
-    {id:21, name:"Silva Logo Layered Tee", cat:"Tees", price:212, image:"clothes image/Screenshot (43).png"},
-    {id:22, name:"Silva Panel Sweatpants", cat:"Bottoms", price:54, image:"clothes image/Screenshot (44).png"},
-    {id:23, name:"Silva 88 Raglan Tee", cat:"Tees", price:68, image:"clothes image/Screenshot (45).png"},
-    {id:24, name:"Silva Logo Sweatshirt", cat:"Hoodies", price:152, image:"clothes image/Screenshot (46).png"},
-    {id:25, name:"Silva Logo Crewneck", cat:"Hoodies", price:176, image:"clothes image/Screenshot (47).png"},
-    {id:26, name:"Silva Drip Beanie", cat:"Accessories", price:56, image:"clothes image/Screenshot (48).png"},
-    {id:27, name:"Silva Icon Baseball Tee", cat:"Tees", price:70, image:"clothes image/Screenshot (49).png"},
-    {id:28, name:"Silva 23 Football Jersey", cat:"Tees", price:214, image:"clothes image/Screenshot (50).png"},
-    {id:29, name:"Silva Graffiti Beanie", cat:"Accessories", price:158, image:"clothes image/Screenshot (51).png"},
-    {id:30, name:"Silva Drip Sweatpants", cat:"Bottoms", price:182, image:"clothes image/Screenshot (52).png"},
-    {id:31, name:"Silva Icon Long Sleeve", cat:"Tees", price:60, image:"clothes image/Screenshot (53).png"},
-    {id:32, name:"Silva Drip Long Sleeve", cat:"Tees", price:72, image:"clothes image/Screenshot (54).png"},
-    {id:33, name:"Silva Loom Hoodie", cat:"Hoodies", price:186, image:"clothes image/5bb5c3d9-d419-48f4-821e-d696c7e4a72a.png"},
-    {id:34, name:"Silva Alpine Pullover", cat:"Outerwear", price:194, image:"clothes image/exmpleeee.png"}
-  ];
-
-
+  let catalog=[];
+  try { catalog=(await Store.api('catalog')).products; }
+  catch(error) { const note=document.createElement('p');note.className='notice error';note.textContent=error.message;document.getElementById('productGrid').before(note); }
+  const PRODUCTS=catalog.map(p=>({...p,name:Store.escape(p.name),cat:Store.escape(p.cat),image:Store.escape(p.image),price:p.price/100000}));
 
   const CATEGORIES = ["All","Hoodies","Tees","Bottoms","Sets","Outerwear","Accessories"];
   let activeCat = "All";
   let searchTerm = "";
   let sortMode = "featured";
-  let cart;
-  try {cart = JSON.parse(localStorage.getItem('silvaCart') || '{}');} catch {cart = {};}
-  if(!cart || Array.isArray(cart) || typeof cart !== 'object') cart = {};
-  for(const id of Object.keys(cart)) if(!PRODUCTS.some(p=>p.id === Number(id)) || !Number.isInteger(cart[id]) || cart[id]<1 || cart[id]>20) delete cart[id];
-  let ratings = JSON.parse(localStorage.getItem('raimeRatings') || '{}');
+
 
   function fmt(n){ return "₦" + (n * NAIRA_MULTIPLIER).toLocaleString(); }
 
@@ -480,19 +424,17 @@
       <div class="card">
         <div class="card-art">
           <span class="tag-corner">SD</span>
-          ${p.id <= 8 ? '<span class="card-badge">New</span>' : p.id % 7 === 0 ? '<span class="card-badge">Limited</span>' : ''}
+          ${p.variants.some(v=>v.stock>0) ? '<span class="card-badge">In stock</span>' : '<span class="card-badge">Sold out</span>'}
           <a class="details-toggle" href="product-details.html?id=${p.id}&name=${encodeURIComponent(p.name)}&cat=${encodeURIComponent(p.cat)}&price=${p.price}&image=${encodeURIComponent(p.image)}">Details</a>
           <img class="product-image" src="${p.image}" alt="${p.name}">
-          <div class="rating" aria-label="Rate ${p.name}">
-            ${[1,2,3,4,5].map(star => `<button type="button" class="${star <= (ratings[p.id] || 4) ? 'active' : ''}" data-rating="${star}" data-id="${p.id}" aria-label="${star} star${star === 1 ? '' : 's'}">★</button>`).join('')}
-          </div>
+          <div class="rating"><span>View details & availability</span></div>
         </div>
         <div class="card-body">
           <div class="card-cat">${p.cat}</div>
           <div class="card-name">${p.name}</div>
           <div class="card-foot">
             <span class="price">${fmt(p.price)}</span>
-            <button class="add-btn" data-id="${p.id}">Add to cart</button>
+            <button class="add-btn" data-id="${p.id}">Choose options</button>
           </div>
         </div>
       </div>
@@ -500,104 +442,13 @@
     grid.querySelectorAll('.add-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const id = Number(btn.dataset.id);
-        cart[id] = Math.min(20, (cart[id]||0) + 1);
-        renderCart();
-        bumpCartCount();
-        animateToCart(btn);
+        location.href='product-details.html?id='+id;
       });
     });
-    grid.querySelectorAll('.rating button').forEach(btn=>{
-      btn.addEventListener('click', (event)=>{
-        event.stopPropagation();
-        ratings[btn.dataset.id] = Number(btn.dataset.rating);
-        localStorage.setItem('raimeRatings', JSON.stringify(ratings));
-        renderGrid();
-      });
-    });
-    requestAnimationFrame(()=> requestAnimationFrame(()=> grid.classList.add('in')));
   }
 
-  function bumpCartCount(){
-    const el = document.getElementById('cartCount');
-    el.classList.remove('bump');
-    void el.offsetWidth;
-    el.classList.add('bump');
-  }
-
-  function animateToCart(button){
-    const source = button.closest('.card').querySelector('.card-art img');
-    const target = document.getElementById('cartOpenBtn');
-    if(!source || !target) return;
-    const sourceBox = source.getBoundingClientRect();
-    const targetBox = target.getBoundingClientRect();
-    const flight = document.createElement('img');
-    flight.src = source.src;
-    flight.alt = '';
-    flight.className = 'cart-flight';
-    flight.style.left = `${sourceBox.left + (sourceBox.width - 58) / 2}px`;
-    flight.style.top = `${sourceBox.top + (sourceBox.height - 58) / 2}px`;
-    flight.style.setProperty('--flight-x', `${targetBox.left + targetBox.width / 2 - (sourceBox.left + sourceBox.width / 2)}px`);
-    flight.style.setProperty('--flight-y', `${targetBox.top + targetBox.height / 2 - (sourceBox.top + sourceBox.height / 2)}px`);
-    document.body.appendChild(flight);
-    flight.addEventListener('animationend', ()=> flight.remove());
-  }
-
-  function renderCart(){
-    for(const id of Object.keys(cart)) if(cart[id] <= 0) delete cart[id];
-    localStorage.setItem('silvaCart', JSON.stringify(cart));
-    const ids = Object.keys(cart).filter(id => cart[id] > 0);
-    document.getElementById('cartCount').textContent = ids.reduce((s,id)=> s + cart[id], 0);
-
-    const itemsEl = document.getElementById('drawerItems');
-    if(ids.length === 0){
-      itemsEl.innerHTML = `<div class="empty-cart">Your cart is empty.</div>`;
-    } else {
-      itemsEl.innerHTML = ids.map(id=>{
-        const p = PRODUCTS.find(p=>p.id===Number(id));
-        return `
-        <div class="drawer-item">
-          <div class="drawer-item-art"><img src="${p.image}" alt="${p.name}"></div>
-          <div class="drawer-item-info">
-            <div class="nm">${p.name}</div>
-            <div class="cat">${fmt(p.price)}</div>
-            <div class="qty-row">
-              <button class="qty-btn qty-minus" type="button" data-action="dec" data-id="${p.id}" aria-label="Decrease ${p.name} quantity" title="Decrease quantity"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
-              <span>${cart[id]}</span>
-              <button class="qty-btn qty-plus" type="button" data-action="inc" data-id="${p.id}" aria-label="Increase ${p.name} quantity" title="Increase quantity"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
-              <button class="remove-link" data-action="rm" data-id="${p.id}">Remove</button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-      itemsEl.querySelectorAll('button[data-action]').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const id = btn.dataset.id;
-          const action = btn.dataset.action;
-          if(action==="inc") cart[id] = Math.min(20, cart[id]+1);
-          if(action==="dec") cart[id] = Math.max(0, cart[id]-1);
-          if(action==="rm") cart[id] = 0;
-          renderCart();
-        });
-      });
-    }
-
-    const subtotal = ids.reduce((s,id)=>{
-      const p = PRODUCTS.find(p=>p.id===Number(id));
-      return s + p.price * cart[id];
-    }, 0);
-    document.getElementById('subtotal').textContent = fmt(subtotal);
-  }
-
-  function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
-  function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
-
-  document.getElementById('cartOpenBtn').addEventListener('click', openDrawer);
-  document.getElementById('closeCartBtn').addEventListener('click', closeDrawer);
-  document.getElementById('overlay').addEventListener('click', closeDrawer);
-  document.getElementById('checkoutBtn').addEventListener('click', ()=>{
-    if(!Object.keys(cart).some(id=>cart[id]>0)) {alert('Your cart is empty.'); return;}
-    location.href = 'checkout.html';
-  });
+  function renderCart(){document.getElementById('cartCount').textContent=Store.cart().reduce((sum,item)=>sum+item.quantity,0);}
+  document.getElementById('cartOpenBtn').addEventListener('click',()=>location.href='checkout.html');
   document.getElementById('newsletterForm').addEventListener('submit', (e)=>{
     e.preventDefault();
     document.getElementById('foot-note').textContent = "Newsletter signup is coming soon. Please contact us for drop updates.";
@@ -627,5 +478,5 @@
   document.querySelectorAll('.reveal, .shop-head.reveal, .foot-grid.reveal').forEach(el => revealObserver.observe(el));
 </script>
 
-</body>
+<div class="store-links"><a href="orders.html">My orders</a><a href="policies.html#delivery">Delivery</a><a href="policies.html#returns">Returns</a><a href="policies.html#privacy">Privacy</a></div></body>
 </html>
