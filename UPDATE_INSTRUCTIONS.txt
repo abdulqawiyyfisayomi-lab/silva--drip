@@ -1,0 +1,5 @@
+1. Upload the HTML, JS and CSS files to the repository root, replacing matching files. Keep existing product photos. Upload silva-logo.png too.
+2. Upload the api and server folders with their folder paths preserved.
+3. Run only-owner-admin.sql in the Supabase SQL Editor. It requires the confirmed owner account abdulqawiyyfisayomi@gmail.com and removes admin permission from all other accounts.
+4. After Vercel finishes deploying, sign out and sign in again. Use https://silva-drip-f5hd.vercel.app.
+5. Change product display names in Admin > Products & stock > Edit > Name > Save product. Existing product photo filenames are kept to avoid breaking links.

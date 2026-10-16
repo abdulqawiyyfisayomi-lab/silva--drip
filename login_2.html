@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign in — Silva Drip</title>
-<link rel="icon" href="silva logo.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -145,7 +145,8 @@
   .account-view{background:#fff;}
   @media(max-width:760px){.announcement{font-size:.62rem;padding:7px 10px}.page-head{padding:54px 0 42px}.page-head::after{font-size:5rem;bottom:-4px}.page-head-logo{width:76px;height:76px}.auth-section{padding:54px 18px 86px}}
 </style>
-<link rel="stylesheet" href="responsive.css"></head>
+<link rel="stylesheet" href="responsive.css"><style>.store-links [hidden]{display:none!important}</style>
+<link rel="icon" type="image/png" href="silva-logo.png"><link rel="apple-touch-icon" href="silva-logo.png"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="site-polish.css"><script src="site-polish.js" defer></script></head>
 <body>
 <div class="announcement">SILVA DRIP · Explore the collection</div>
 
@@ -397,6 +398,7 @@
   });
 
   function showAccount(user){
+    document.getElementById('storeAdminLink')?.toggleAttribute('hidden', !(user.email?.toLowerCase()==='abdulqawiyyfisayomi@gmail.com' && user.email_confirmed_at && user.app_metadata?.store_admin===true));
     const name = user.user_metadata?.name || user.email.split('@')[0];
     document.getElementById('tabs').style.display = 'none';
     document.getElementById('authBody').style.display = 'none';
@@ -420,10 +422,11 @@
   silvaAuth.auth.getUser().then(({data})=>{if(data.user) showAccount(data.user);});
   silvaAuth.auth.onAuthStateChange((event, session)=>{
     if(session) showAccount(session.user);
+    else document.getElementById('storeAdminLink')?.setAttribute('hidden','');
   });
 
   // Mobile nav
 </script>
 
-<div class="store-links"><a href="orders.html">My orders & tracking</a><a href="checkout.html">My bag</a><a href="admin.html">Store admin</a></div></body>
+<div class="store-links"><a href="orders.html">My orders & tracking</a><a href="checkout.html">My bag</a><a href="admin.html" id="storeAdminLink" hidden>Store admin</a></div></body>
 </html>
